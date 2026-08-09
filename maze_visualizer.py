@@ -21,7 +21,7 @@ def display_maze():
             width = 0
             for cell in row:
                 if cell & 8: #w
-                    pygame.draw.line(main_surface, Blue, (x,y), (x, y+10))
+                    pygame.draw.line(main_surface, Blue, (x,y), (x, y+50))
                 if cell & 1: #n
                     pygame.draw.line(main_surface, Blue, (x,y), (x+10, y))
                 if width == 14 :
@@ -30,6 +30,13 @@ def display_maze():
                     pygame.draw.line(main_surface, Blue, (x,y+10), (x+10, y+10))
                 x+=10
                 width += 1
+                    pygame.draw.line(main_surface, Blue, (x,y), (x+10, y))
+                if width == 14:
+                    pygame.draw.line(main_surface, Blue, (x+10,y), (x+10, y+10))
+                if height == 14 :
+                    pygame.draw.line(main_surface, (255,0,0), (x,y+10), (x+10, y+10))
+                width+=1
+                x+=10
             height += 1
             y+=10
    
