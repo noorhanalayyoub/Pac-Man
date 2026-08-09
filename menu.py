@@ -1,6 +1,8 @@
 import pygame 
 from sys import exit 
 from mazegenerator import MazeGenerator
+from maze_visualizer import display_maze
+import random
 
 pygame.init()
 screen = pygame.display.set_mode((1920,1080))
@@ -8,6 +10,7 @@ screen = pygame.display.set_mode((1920,1080))
 start_button_color=(255,255,255)
 menu = True
 
+seed = random.randint(1,1000)
 
 
 
@@ -62,7 +65,8 @@ while True:
         
     else:
 
-        screen.fill((0,0,255))
+        screen.fill((0,0,0))
+        display_maze(screen,seed)
                 
     pygame.display.update()
 
