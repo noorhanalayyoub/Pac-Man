@@ -2,21 +2,21 @@ import pygame
 from mazegenerator import MazeGenerator
 
 def display_maze(surface,our_seed):
-    maze = MazeGenerator(seed=our_seed)
+    maze = MazeGenerator(seed=our_seed,size=(46,20))
     grid = maze.maze
     #pygame.init()
     #main_surface = pygame.display.set_mode((1920,1080))
     main_surface=surface
     color = (0, 0, 255)
-    x = 500
-    y = 100
+    x = 40
+    y = 120
     for event in pygame.event.get():
         if event.type==pygame.QUIT:
             pygame.quit()
             exit()
     height = 0
     for row in grid:
-        x = 500
+        x = 40
         width = 0
         for cell in row:
             if cell == 15 :
@@ -24,14 +24,14 @@ def display_maze(surface,our_seed):
             else:
                 color = (0, 0, 255)
             if cell & 8: #w
-                pygame.draw.line(main_surface, color, (x,y), (x, y+50))
+                pygame.draw.line(main_surface, color, (x,y), (x, y+40))
             if cell & 1: #n
-                pygame.draw.line(main_surface, color, (x,y), (x+50, y))
-            if width == 14 :
-                pygame.draw.line(main_surface, color, (x+50,y), (x+50, y+50))
-            if height == 14:
-                pygame.draw.line(main_surface, color, (x,y+50), (x+50, y+50))
-            x+=50
+                pygame.draw.line(main_surface, color, (x,y), (x+40, y))
+            if width == maze._width -1 :
+                pygame.draw.line(main_surface, color, (x+40,y), (x+40, y+40))
+            if height ==maze._height - 1:
+                pygame.draw.line(main_surface, color, (x,y+40), (x+40, y+40))
+            x+=40
             width += 1
         height += 1
-        y+=50
+        y+=40

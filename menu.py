@@ -2,6 +2,7 @@ import pygame
 from sys import exit 
 from mazegenerator import MazeGenerator
 from maze_visualizer import display_maze
+from player import Player
 import random
 
 pygame.init()
@@ -12,7 +13,7 @@ menu = True
 
 seed = random.randint(1,1000)
 
-
+player=Player(screen)
 
 
 
@@ -31,11 +32,11 @@ while True:
                 if start_button_rect.collidepoint(mouse_pos):
                     print("start")
                     start_button_color = (255,0,0)
-                    menu =False      
-
+                    menu = False      
                 if exit_button_rect.collidepoint(mouse_pos):
                     pygame.quit()
                     exit()
+ 
     if menu :
         #title
         title = pygame.image.load('images/pacman_title.jpg').convert_alpha()
@@ -67,6 +68,7 @@ while True:
 
         screen.fill((0,0,0))
         display_maze(screen,seed)
-                
+        player.draw(screen)
+        player.move()
     pygame.display.update()
 
