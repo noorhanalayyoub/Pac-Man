@@ -14,7 +14,7 @@ menu = True
 seed = random.randint(1,1000)
 
 player=Player(screen)
-
+clock=pygame.time.Clock() 
 
 
 
@@ -70,5 +70,8 @@ while True:
         display_maze(screen,seed)
         player.draw(screen)
         player.move()
+        
+        player.animate()
     pygame.display.update()
+    #clock.tick(80)
 
