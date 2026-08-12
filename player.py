@@ -1,5 +1,6 @@
 import pygame
-
+from collision import collide_line
+from maze_visualizer import display_maze
 class Player():
     def __init__(self,surface):
         self.last = pygame.time.get_ticks()
@@ -17,14 +18,16 @@ class Player():
         self.pacman =[pacman1,pacman2,pacman3,pacman4]
         self.pacman_index = 0
         self.image = self.pacman[self.pacman_index]
-        self.direction = None
-    
+        self.direction = None 
+       # self.rect = self.image.get_rect(topleft= (self.pos[0],self.pos[1]))
 
     def draw(self,surface):
         self.rect = self.image.get_rect(topleft= (self.pos[0],self.pos[1]))
         surface.blit(self.image,self.rect)
         
-    def move(self):
+    def move(self,maze,surface):
+        lines = display_maze(surface, maze)
+        collide_line(self.rect,lines)
         keys = pygame.key.get_pressed()
         if keys[pygame.K_UP]:
             self.pos[1] -= 1

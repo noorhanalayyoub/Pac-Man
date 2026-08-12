@@ -67,7 +67,7 @@ while True:
         screen.fill((0,0,0))
         display_maze(maze,screen)
         player.draw(screen)
-        player.move()
+        player.move(screen,maze)
         
         player.animate()
     pygame.display.update()
