@@ -15,9 +15,7 @@ seed = random.randint(1,1000)
 
 player=Player(screen)
 clock = pygame.time.Clock() 
-
-
-
+maze = MazeGenerator(seed=seed,size=(30,14))
     
 
 
@@ -67,7 +65,7 @@ while True:
     else:
 
         screen.fill((0,0,0))
-        display_maze(screen,seed)
+        display_maze(maze,screen)
         player.draw(screen)
         player.move()
         
