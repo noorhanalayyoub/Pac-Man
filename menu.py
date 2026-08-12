@@ -14,7 +14,7 @@ menu = True
 seed = random.randint(1,1000)
 
 player=Player(screen)
-clock=pygame.time.Clock() 
+clock = pygame.time.Clock() 
 
 
 

@@ -1,12 +1,12 @@
 import pygame
+
 class Player():
     def __init__(self,surface):
-        self.clock = pygame.time.Clock()
+        self.last = pygame.time.get_ticks()
+        self.cooldown = 100
         self.lives =3
         self.pos = [940,540]
         self.surface=surface
-        #self.draw(surface)
-        #self.move()
         pacman1= pygame.image.load("images/pacman1.png")
         pacman2= pygame.image.load("images/2.png")
         pacman3= pygame.image.load("images/3.png")
@@ -26,7 +26,6 @@ class Player():
         if keys[pygame.K_UP]:
             self.pos[1] -= 1
             self.rotate("up")
-            #self.animate()
         elif keys[pygame.K_DOWN]:
             self.pos[1] +=1
             self.rotate("down")
@@ -38,34 +37,39 @@ class Player():
             self.rotate("left")
 
     def animate(self):
-     # print(pygame.time.get_ticks())
-        if(int(pygame.time.get_ticks()) % 60) == 0:
+        now = pygame.time.get_ticks() 
+        # change image only if cooldown has been 0.1 seconds since last
+        if now - self.last >= self.cooldown:
+            self.last = now
             if self.pacman_index < 3:
+                
+                #pygame.time.wait(100)
                 self.pacman_index += 1
             else:
                 self.pacman_index = 0
-            self.image= self.pacman[self.pacman_index]
-    
+            self.update_image()
+
     def rotate(self,goal_direction):
-        if self.direction == None:
-            if goal_direction != self.direction:
-                if goal_direction == "up":
-                    self.direction = "up"
-                    self.image= pygame.transform.rotate(self.image,90)
-                elif goal_direction == "down":
-                    self.direction = "down"
-                    print("rotated")
-                    self.image = pygame.transform.rotate(self.image,270)
+        if self.direction == goal_direction :
+            return
+        self.direction = goal_direction
+        self.update_image()
 
-                elif goal_direction == "right":
-                    self.direction = "right"
-                    self.image = pygame.transform.rotate(self.image,0)
-
-                elif goal_direction == "left":
-                    self.direction = "left"
-                    self.image = pygame.transform.rotate(self.image,180)
-
-
+    def update_image(self):
+        rotation =0
+        if self.direction == "up":
+           #self.image = pygame.transform.rotate(original_image,90)
+           rotation = 90
+        elif self.direction == "down":
+          # self.image = pygame.transform.rotate(original_image,270)
+           rotation = 270
+        elif self.direction == "right":
+            #self.image = pygame.transform.rotate(original_image,0)
+            rotation = 0
+        elif self.direction == "left":
+            #self.image = pygame.transform.rotate(original_image,180)
+            rotation = 180
+        self.image = pygame.transform.rotate(self.pacman[self.pacman_index],rotation)
 
 
 
