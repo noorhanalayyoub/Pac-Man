@@ -7,10 +7,13 @@ class Player():
         self.lives =3
         self.pos = [940,540]
         self.surface=surface
+        self.score = 0 
+
         pacman1= pygame.image.load("images/pacman1.png")
         pacman2= pygame.image.load("images/2.png")
         pacman3= pygame.image.load("images/3.png")
         pacman4= pygame.image.load("images/4.png")
+
         self.pacman =[pacman1,pacman2,pacman3,pacman4]
         self.pacman_index = 0
         self.image = self.pacman[self.pacman_index]
