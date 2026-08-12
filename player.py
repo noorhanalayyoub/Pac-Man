@@ -72,7 +72,7 @@ class Player():
         elif self.direction == "left":
             #self.image = pygame.transform.rotate(original_image,180)
             rotation = 180
-        self.image = pygame.transform.rotate(self.pacman[self.pacman_index],rotation)
+        self.image = pygame.transform.rotozoom(self.pacman[self.pacman_index],rotation,2)
 
 
 
