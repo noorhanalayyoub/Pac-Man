@@ -44,11 +44,8 @@ def display_maze(maze,surface):
                 tuple1 = tuple((x,y+60))
                 tuple2 = tuple ((x+60, y+60))
                 lines.append(tuple((tuple1, tuple2)))     
-            print(lines[-1])
-            print(type(lines[-1]))
             x += 60
             width += 1
         height += 1
         y += 60 #cell height
-        return lines
-        print(lines)
+    return lines

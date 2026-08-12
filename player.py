@@ -8,7 +8,8 @@ class Player():
         self.lives =3
         self.pos = [940,540]
         self.surface=surface
-        self.score = 0 
+        self.score = 0
+
 
         pacman1= pygame.image.load("images/pacman1.png")
         pacman2= pygame.image.load("images/2.png")
@@ -25,8 +26,7 @@ class Player():
         self.rect = self.image.get_rect(topleft= (self.pos[0],self.pos[1]))
         surface.blit(self.image,self.rect)
         
-    def move(self,maze,surface):
-        lines = display_maze(surface, maze)
+    def move(self,maze, lines):
         collide_line(self.rect,lines)
         keys = pygame.key.get_pressed()
         if keys[pygame.K_UP]:
