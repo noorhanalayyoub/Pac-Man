@@ -72,6 +72,6 @@ while True:
         player.animate()
         player.draw(screen)
     pygame.display.update()
-    clock.tick(10)
+    clock.tick(40)
     
 
