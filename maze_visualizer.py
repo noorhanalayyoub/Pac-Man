@@ -9,7 +9,7 @@ def display_maze(maze,surface):
     #main_surface = pygame.display.set_mode((1920,1080))
     main_surface=surface
     color = (0, 0, 255)
-    x = 40
+    x = 60
     y = 120
     for event in pygame.event.get():
         if event.type==pygame.QUIT:

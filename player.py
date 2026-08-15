@@ -6,7 +6,8 @@ class Player():
         self.last = pygame.time.get_ticks()
         self.cooldown = 100
         self.lives =3
-        self.pos = [940,540]
+        self.pos = [930,510] # cell_size(60) * (width /2 +1) - 30  ..... cell_size * (height / 2 +2) -30
+                             # -30 to be in the middle of the cell 
         self.surface=surface
         self.score = 0
 
@@ -23,7 +24,7 @@ class Player():
        # self.rect = self.image.get_rect(topleft= (self.pos[0],self.pos[1]))
 
     def draw(self,surface):
-        self.rect = self.image.get_rect(topleft= (self.pos[0],self.pos[1]))
+        self.rect = self.image.get_rect(center= (self.pos[0],self.pos[1]))
         surface.blit(self.image,self.rect)
         
     def move(self,maze, lines):
