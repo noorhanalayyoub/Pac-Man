@@ -36,19 +36,19 @@ class Player():
                 for i in range (60):
                     self.pos[1] -= speed
                     self.rotate("up")
-                if (self.pos[1] - 150)% 30 ==0:
+                if (self.pos[1] - 150)% 60 ==0:
                     var.col -=1
             elif keys[pygame.K_DOWN] and possible_moves["s"]:
                 for i in range (60):
                     self.pos[1] +=speed
                     self.rotate("down")
-                if (self.pos[1] - 150 )%30 ==0:
+                if (self.pos[1] - 150 )%60 ==0:
                     var.col+=1
             elif keys[pygame.K_RIGHT] and  possible_moves["e"] :
                 for i in range (60):
                     self.pos[0]+=speed
                     self.rotate("right")
-                if (self.pos[0] - 90)%30 == 0:
+                if (self.pos[0] - 90)%60 == 0:
                     var.row+=1
             elif keys[pygame.K_LEFT] and possible_moves["w"] :
                 for i in range (60):
