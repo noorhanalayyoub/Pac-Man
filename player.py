@@ -1,6 +1,8 @@
 import pygame
 from collision import collide_line
 from maze_visualizer import display_maze
+import var
+
 class Player():
     def __init__(self,surface):
         self.last = pygame.time.get_ticks()
@@ -27,21 +29,33 @@ class Player():
         self.rect = self.image.get_rect(center= (self.pos[0],self.pos[1]))
         surface.blit(self.image,self.rect)
         
-    def move(self,maze, lines):
-        collide_line(self.rect,lines)
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_UP]:
-            self.pos[1] -= 1
-            self.rotate("up")
-        elif keys[pygame.K_DOWN]:
-            self.pos[1] +=1
-            self.rotate("down")
-        elif keys[pygame.K_RIGHT]: 
-            self.pos[0]+=1
-            self.rotate("right")
-        elif keys[pygame.K_LEFT]: 
-            self.pos[0]-=1
-            self.rotate("left")
+    def move(self,maze, lines,possible_moves):
+            keys = pygame.key.get_pressed()
+            speed =1
+            if keys[pygame.K_UP] and possible_moves["n"]:
+                for i in range (60):
+                    self.pos[1] -= speed
+                    self.rotate("up")
+                if (self.pos[1] - 150)% 30 ==0:
+                    var.col -=1
+            elif keys[pygame.K_DOWN] and possible_moves["s"]:
+                for i in range (60):
+                    self.pos[1] +=speed
+                    self.rotate("down")
+                if (self.pos[1] - 150 )%30 ==0:
+                    var.col+=1
+            elif keys[pygame.K_RIGHT] and  possible_moves["e"] :
+                for i in range (60):
+                    self.pos[0]+=speed
+                    self.rotate("right")
+                if (self.pos[0] - 90)%30 == 0:
+                    var.row+=1
+            elif keys[pygame.K_LEFT] and possible_moves["w"] :
+                for i in range (60):
+                    self.pos[0]-=speed
+                    self.rotate("left")
+                if (self.pos[0] - 90) % 60 == 0:
+                    var.row-=1
 
     def animate(self):
         now = pygame.time.get_ticks() 
@@ -65,16 +79,12 @@ class Player():
     def update_image(self):
         rotation =0
         if self.direction == "up":
-           #self.image = pygame.transform.rotate(original_image,90)
            rotation = 90
         elif self.direction == "down":
-          # self.image = pygame.transform.rotate(original_image,270)
            rotation = 270
         elif self.direction == "right":
-            #self.image = pygame.transform.rotate(original_image,0)
             rotation = 0
         elif self.direction == "left":
-            #self.image = pygame.transform.rotate(original_image,180)
             rotation = 180
         self.image = pygame.transform.rotozoom(self.pacman[self.pacman_index],rotation,2)
 

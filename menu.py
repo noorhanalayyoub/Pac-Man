@@ -4,6 +4,8 @@ from mazegenerator import MazeGenerator
 from maze_visualizer import display_maze
 from player import Player
 import random
+import collision 
+import var
 
 pygame.init()
 screen = pygame.display.set_mode((1920,1080))
@@ -16,7 +18,7 @@ seed = random.randint(1,1000)
 player=Player(screen)
 clock = pygame.time.Clock() 
 maze = MazeGenerator(seed=seed,size=(30,14))
-    
+
 
 
 while True:
@@ -63,13 +65,13 @@ while True:
         screen.blit(instructions_button ,instructions_rect)
         
     else:
-
+        possible_moves=collision.get_possible_moves(maze.maze[var.col][var.row])
         screen.fill((0,0,0))
         lines= display_maze(maze,screen)
-        player.draw(screen)
-        player.move(maze, lines)
-        
+        player.move(maze, lines,possible_moves)
         player.animate()
+        player.draw(screen)
     pygame.display.update()
-    #clock.tick(80)
+    clock.tick(10)
+    
 
