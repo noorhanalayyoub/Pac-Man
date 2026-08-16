@@ -1,5 +1,5 @@
 import pygame
-from collision import collide_line
+from collision import collide_rect
 from maze_visualizer import display_maze
 import var
 
@@ -14,7 +14,7 @@ class Player():
                              # -30 to be in the middle of the cell 
         self.surface=surface
         self.score = 0
-
+        self.rect = None
 
         pacman1= pygame.image.load("images/pacman1.png")
         pacman2= pygame.image.load("images/2.png")
@@ -94,6 +94,13 @@ class Player():
             rotation = 180
         self.image = pygame.transform.rotozoom(self.pacman[self.pacman_index],rotation,2)
 
-
+    def ate_gum(self,gum_rect):
+        for gum in gum_rect:
+            #print(gum.x,gum.y)
+            if self.pos[0] == gum.x+1 and self.pos[1] == gum.y+1:
+                self.score += 1
+                var.removed.append(gum)
+                
+        return self.score
 
         

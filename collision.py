@@ -18,3 +18,8 @@ def collide_line(rect,lines):
         if clip_line:
             print(clip_line)
             return True
+def collide_rect(rect1,rect2):
+    if rect1.x == rect2.x and rect1.y == rect2.y:
+        return True
+        print("collided w a gum")
+    return False

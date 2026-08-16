@@ -1,7 +1,10 @@
 import random 
 import pygame
+import var
 
-l = [1,1,1,1,1,0]
+
+#l = [1,1,1,1,1,0]
+l = [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
 def place_gums(surface,maze):
     total_gums = []
     grid = maze.maze
@@ -21,8 +24,8 @@ def place_gums(surface,maze):
         y+=60
     return total_gums
 
-def draw_gums(surface,maze,gums):
-
+def draw_gums(surface,maze,gums,removed):
+    gums_rects=[]
     grid = maze.maze
     x = 60
     y = 120
@@ -30,8 +33,19 @@ def draw_gums(surface,maze,gums):
         x = 60
         for c,cell in enumerate (row):
             if gums[r][c]:
-                pygame.draw.circle(surface,(255,255,255),(x+30,y+30),1)
+                gum=pygame.draw.circle(surface,(255,255,255),(x+30,y+30),1)
+                if gum not in removed:
+                    gums_rects.append(gum)
+                else:
+                    gum=pygame.draw.circle(surface,(0,0,0),(x+30,y+30),1)
+                    #remove_gums(gums_rects)
             x +=60
         y+=60   
+    return gums_rects
 
-    
+def remove_gums(gums_rects):
+    if var.removed:
+        gum = var.removed[0]
+        gums_rects.remove(gum)
+        
+

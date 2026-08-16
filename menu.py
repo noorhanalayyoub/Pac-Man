@@ -6,7 +6,7 @@ from player import Player
 import random
 import collision 
 import var
-from pacgums import place_gums,draw_gums
+from pacgums import place_gums,draw_gums,remove_gums
 
 
 pygame.init()
@@ -69,10 +69,17 @@ while True:
         possible_moves=collision.get_possible_moves(maze.maze[var.col][var.row])
         screen.fill((0,0,0))
         lines= display_maze(maze,screen)
-        draw_gums(screen,maze,gums)
-        player.move(maze, lines,possible_moves)
-        player.animate()
+        gum_rects = draw_gums(screen,maze,gums,var.removed)
         player.draw(screen)
+        player.move(maze,lines,possible_moves)
+        score= player.ate_gum(gum_rects)
+        player.animate()
+        #player.draw(screen)
+        print(score)
+        if not gums:
+            screen.fill(0,0,0)
+            print("win")
+
     pygame.display.update()
     clock.tick(40)
     
