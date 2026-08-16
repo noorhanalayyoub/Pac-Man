@@ -6,6 +6,8 @@ from player import Player
 import random
 import collision 
 import var
+from pacgums import place_gums,draw_gums
+
 
 pygame.init()
 screen = pygame.display.set_mode((1920,1080))
@@ -14,11 +16,10 @@ start_button_color=(255,255,255)
 menu = True
 
 seed = random.randint(1,1000)
-
-player=Player(screen)
+player = Player(screen)
 clock = pygame.time.Clock() 
 maze = MazeGenerator(seed=seed,size=(30,14))
-
+gums = place_gums(screen,maze)
 
 
 while True:
@@ -68,6 +69,7 @@ while True:
         possible_moves=collision.get_possible_moves(maze.maze[var.col][var.row])
         screen.fill((0,0,0))
         lines= display_maze(maze,screen)
+        draw_gums(screen,maze,gums)
         player.move(maze, lines,possible_moves)
         player.animate()
         player.draw(screen)

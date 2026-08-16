@@ -11,10 +11,6 @@ def display_maze(maze,surface):
     color = (0, 0, 255)
     x = 60
     y = 120
-    for event in pygame.event.get():
-        if event.type==pygame.QUIT:
-            pygame.quit()
-            exit()
     height = 0
     for row in grid:
         x = 60 #cell width
