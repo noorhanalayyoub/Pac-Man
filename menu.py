@@ -19,7 +19,7 @@ seed = random.randint(1,1000)
 player = Player(screen)
 clock = pygame.time.Clock() 
 maze = MazeGenerator(seed=seed,size=(30,14))
-gums = place_gums(screen,maze)
+gums,num_of_gums = place_gums(screen,maze)
 
 
 while True:
@@ -76,8 +76,11 @@ while True:
         player.animate()
         #player.draw(screen)
         print(score)
-        if not gums:
-            screen.fill(0,0,0)
+        if num_of_gums == score:
+            screen.fill((0,0,0))
+            win_image = pygame.image.load('images/win.png').convert_alpha()
+            win_rect = win_image.get_rect(center=(960,200))
+            screen.blit(win_image,win_rect)
             print("win")
 
     pygame.display.update()

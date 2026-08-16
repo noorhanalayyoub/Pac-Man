@@ -7,6 +7,7 @@ import var
 l = [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
 def place_gums(surface,maze):
     total_gums = []
+    num_of_gums= 0
     grid = maze.maze
     x = 60
     y = 120
@@ -16,13 +17,14 @@ def place_gums(surface,maze):
         for cell in row:
             if random.choice(l) and not cell ==15:
                 gum_row.append(1)
+                num_of_gums+=1
                 #pygame.draw.circle(surface,(255,255,255),(x+30,y+30),1)
             else:
                 gum_row.append(0)
             x +=60
         total_gums.append(gum_row)
         y+=60
-    return total_gums
+    return total_gums,num_of_gums
 
 def draw_gums(surface,maze,gums,removed):
     gums_rects=[]
