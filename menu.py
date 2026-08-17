@@ -6,7 +6,7 @@ from player import Player
 import random
 import collision 
 import var
-from pacgums import place_gums,draw_gums,remove_gums
+from pacgums import place_gums,place_super_pacgums,draw_gums,remove_gums
 
 
 pygame.init()
@@ -70,6 +70,7 @@ while True:
         screen.fill((0,0,0))
         lines= display_maze(maze,screen)
         gum_rects = draw_gums(screen,maze,gums,var.removed)
+        place_super_pacgums(screen,maze)
         player.draw(screen)
         player.move(maze,lines,possible_moves)
         score= player.ate_gum(gum_rects)

@@ -2,6 +2,7 @@ import pygame
 from collision import collide_rect
 from maze_visualizer import display_maze
 import var
+from pacgums import remove_gums
 
 class Player():
     def __init__(self,surface):
@@ -100,7 +101,17 @@ class Player():
             if self.pos[0] == gum.x+1 and self.pos[1] == gum.y+1:
                 self.score += 1
                 var.removed.append(gum)
-                
+        if self.ate_super():
+            self.score += 5
         return self.score
+    def ate_super(self):
+        if self.pos[0] == 90 and self.pos[1] == 150 and not var.super1:
+            x=90
+            y=150
+            var.super1 = 1
+            print("super")
+            remove_gums(self.surface,x=90,y=150)
+            return True
+        pass
 
         

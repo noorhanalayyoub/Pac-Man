@@ -49,10 +49,28 @@ def draw_gums(surface,maze,gums,removed):
         y+=60   
     return gums_rects
 
-def remove_gums(gums_rects):
-    if var.removed:
-        gum = var.removed[0]
-        gums_rects.remove(gum)
+def remove_gums(surface,x,y):
+    #if var.removed:
+     #gum = var.removed[0]
+      #gums_rects.remove(gum)
+      pygame.draw.circle(surface,(0,0,0),(x,y),3)
+      print("removed")
+      
         
 def place_super_pacgums(surface,maze):
-    pass
+    grid = maze.maze
+    x = 60
+    y = 120
+    r = 0
+    for row in grid :
+        gum_row=[]
+        x = 60
+        r+=1
+        c=0
+        for cell in row:
+            c+=1  
+            if ( (r==1 and ( (c==1 and not var.super1) or ( (c==30 and not var.super2) ) )) or (r==14 and (c==1 or c==30))) :
+                pygame.draw.circle(surface,(255,255,255),(x+30,y+30),3)
+            x+=60
+        y+=60
+    
