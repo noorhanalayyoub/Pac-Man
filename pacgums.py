@@ -3,22 +3,26 @@ import pygame
 import var
 
 
-#l = [1,1,1,1,1,0]
-l = [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+l = [1,1,1,1,1,0]
+#l = [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
 def place_gums(surface,maze):
     total_gums = []
     num_of_gums= 0
     grid = maze.maze
     x = 60
     y = 120
+    r = 0
     for row in grid :
         gum_row=[]
         x = 60
+        r+=1
+        c=0
         for cell in row:
-            if random.choice(l) and not cell ==15:
+            c+=1 
+            if (random.choice(l) and not cell == 15) and (not ( (r==1 and (c==1 or c==30)) or (r==14 and (c==1 or c==30))  )):
                 gum_row.append(1)
                 num_of_gums+=1
-                #pygame.draw.circle(surface,(255,255,255),(x+30,y+30),1)
+                    #pygame.draw.circle(surface,(255,255,255),(x+30,y+30),1)
             else:
                 gum_row.append(0)
             x +=60
@@ -50,4 +54,5 @@ def remove_gums(gums_rects):
         gum = var.removed[0]
         gums_rects.remove(gum)
         
-
+def place_super_pacgums(surface,maze):
+    pass
