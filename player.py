@@ -112,6 +112,29 @@ class Player():
             print("super")
             remove_gums(self.surface,x=90,y=150)
             return True
-        pass
+        elif self.pos[0] == 1830 and self.pos[1] == 150 and not var.super2:
+            x=1830
+            y=150
+            var.super2 = 1
+            print("super")
+            remove_gums(self.surface,x=1830,y=150)
+            return True
+        elif self.pos[0] == 90 and self.pos[1] == 930 and not var.super3:
+            x=90
+            y=930
+            var.super3 = 1
+            print("super")
+            remove_gums(self.surface,x=90,y=930)
+
+            return True
+
+        elif self.pos[0] == 1710 and self.pos[1] == 930 and not var.super4:
+            x=1830
+            y=930
+            var.super4 = 1
+            print("super")
+            remove_gums(self.surface,x=1830,y=930)  
+            return True
+    
 
         

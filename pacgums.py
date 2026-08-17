@@ -69,7 +69,7 @@ def place_super_pacgums(surface,maze):
         c=0
         for cell in row:
             c+=1  
-            if ( (r==1 and ( (c==1 and not var.super1) or ( (c==30 and not var.super2) ) )) or (r==14 and (c==1 or c==30))) :
+            if ( (r==1 and ( (c==1 and not var.super1) or ( (c==30 and not var.super2) ) )) or (r==14 and ((c==1 and not var.super3) or( c==30 and not var.super4)))) :
                 pygame.draw.circle(surface,(255,255,255),(x+30,y+30),3)
             x+=60
         y+=60
