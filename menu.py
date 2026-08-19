@@ -2,7 +2,12 @@ import pygame
 from sys import exit 
 from mazegenerator import MazeGenerator
 from maze_visualizer import display_maze
+from player import Player
 import random
+import collision 
+import var
+from pacgums import place_gums,place_super_pacgums,draw_gums,remove_gums
+from ghost import ghost, chase, cell_to_pixel
 
 pygame.init()
 screen = pygame.display.set_mode((1920,1080))
@@ -11,13 +16,21 @@ start_button_color=(255,255,255)
 menu = True
 
 seed = random.randint(1,1000)
+player = Player(screen)
+clock = pygame.time.Clock() 
+maze = MazeGenerator(seed=seed,size=(30,14))
+gums,num_of_gums = place_gums(screen,maze)
 
+CELL_SIZE = 60
+ORIGIN_X = 60
+ORIGIN_Y = 120 
 
+GHOST_IMAGE = pygame.image.load("right2.png")  # same image ghost.__init__ loads
+entry_cell = maze.maze_entry
+ghost_start = cell_to_pixel(entry_cell, CELL_SIZE, ORIGIN_X, ORIGIN_Y, GHOST_IMAGE.get_size())
+blinky = ghost(maze, "blinky", None, ghost_start, speed=2)
+blinky.behavior = chase(maze, blinky, player, CELL_SIZE, ORIGIN_X, ORIGIN_Y)
 
-
-
-
-    
 
 
 while True:
@@ -31,11 +44,11 @@ while True:
                 if start_button_rect.collidepoint(mouse_pos):
                     print("start")
                     start_button_color = (255,0,0)
-                    menu =False      
-
+                    menu = False      
                 if exit_button_rect.collidepoint(mouse_pos):
                     pygame.quit()
                     exit()
+ 
     if menu :
         #title
         title = pygame.image.load('images/pacman_title.jpg').convert_alpha()
@@ -64,9 +77,29 @@ while True:
         screen.blit(instructions_button ,instructions_rect)
         
     else:
-
+        possible_moves=collision.get_possible_moves(maze.maze[var.col][var.row])
         screen.fill((0,0,0))
-        display_maze(screen,seed)
-                
+        lines= display_maze(maze,screen)
+        gum_rects = draw_gums(screen,maze,gums,var.removed)
+        place_super_pacgums(screen,maze)
+        player.draw(screen)
+        player.move(maze,lines,possible_moves)
+        score= player.ate_gum(gum_rects)
+        player.animate()
+
+        blinky.moving_algorithm()
+        blinky.draw(screen)
+
+        #player.draw(screen)
+        print(score)
+        if num_of_gums+20  == score:
+            screen.fill((0,0,0))
+            win_image = pygame.image.load('images/win.png').convert_alpha()
+            win_rect = win_image.get_rect(center=(960,200))
+            screen.blit(win_image,win_rect)
+            print("win")
+
     pygame.display.update()
+    clock.tick(40)
+    
 
