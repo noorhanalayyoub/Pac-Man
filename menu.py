@@ -7,7 +7,7 @@ import random
 import collision 
 import var
 from pacgums import place_gums,place_super_pacgums,draw_gums,remove_gums
-
+from ghost import ghost, chase, cell_to_pixel
 
 pygame.init()
 screen = pygame.display.set_mode((1920,1080))
@@ -20,6 +20,17 @@ player = Player(screen)
 clock = pygame.time.Clock() 
 maze = MazeGenerator(seed=seed,size=(30,14))
 gums,num_of_gums = place_gums(screen,maze)
+
+CELL_SIZE = 60
+ORIGIN_X = 60
+ORIGIN_Y = 120 
+
+GHOST_IMAGE = pygame.image.load("right2.png")  # same image ghost.__init__ loads
+entry_cell = maze.maze_entry
+ghost_start = cell_to_pixel(entry_cell, CELL_SIZE, ORIGIN_X, ORIGIN_Y, GHOST_IMAGE.get_size())
+blinky = ghost(maze, "blinky", None, ghost_start, speed=2)
+blinky.behavior = chase(maze, blinky, player, CELL_SIZE, ORIGIN_X, ORIGIN_Y)
+
 
 
 while True:
@@ -75,6 +86,10 @@ while True:
         player.move(maze,lines,possible_moves)
         score= player.ate_gum(gum_rects)
         player.animate()
+
+        blinky.moving_algorithm()
+        blinky.draw(screen)
+
         #player.draw(screen)
         print(score)
         if num_of_gums+20  == score:

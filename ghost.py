@@ -115,7 +115,7 @@ class frightened:
         moves = possible_moves(self.maze, self.ghost.position)
         next_move = random.choice(moves)
         ghost_coords = pixel_to_cell
-        if next_move == 'N':
+#        if next_move == 'N':
 
 
 
