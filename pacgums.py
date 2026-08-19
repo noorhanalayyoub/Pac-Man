@@ -3,8 +3,8 @@ import pygame
 import var
 
 
-l = [1,1,1,1,1,0]
-#l = [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+#l = [1,1,1,1,1,0]
+l = [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
 def place_gums(surface,maze):
     total_gums = []
     num_of_gums= 0

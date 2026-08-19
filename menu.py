@@ -77,7 +77,7 @@ while True:
         player.animate()
         #player.draw(screen)
         print(score)
-        if num_of_gums == score:
+        if num_of_gums+20  == score:
             screen.fill((0,0,0))
             win_image = pygame.image.load('images/win.png').convert_alpha()
             win_rect = win_image.get_rect(center=(960,200))
