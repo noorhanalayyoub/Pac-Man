@@ -128,7 +128,7 @@ class Player():
 
             return True
 
-        elif self.pos[0] == 1710 and self.pos[1] == 930 and not var.super4:
+        elif self.pos[0] == 1830 and self.pos[1] == 930 and not var.super4:
             x=1830
             y=930
             var.super4 = 1
