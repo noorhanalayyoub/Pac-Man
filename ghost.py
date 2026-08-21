@@ -164,7 +164,7 @@ class ghost:
         self.image = pygame.image.load(image_path) 
         self.edible = False
         self.edible_start = 0
-        self.edible_duration = 20000
+        self.edible_duration = 2000
 
     def make_edible(self):
         self.edible = True
@@ -175,7 +175,8 @@ class ghost:
             current_time = pygame.time.get_ticks()
 
             if current_time - self.edible_start >= self.edible_duration:
-                self.edible = False
+                #self.edible = False
+                var.edible = False
     
     def moving_algorithm(self):
         self.behavior.move()
