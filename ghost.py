@@ -4,8 +4,8 @@ import random
 import var
 
 def pixel_to_cell(pos, cell_size, origin_x, origin_y):
-    return [(pos[0] - origin_x) // cell_size,
-            (pos[1] - origin_y) // cell_size]
+    return [int((pos[0] - origin_x) // cell_size),
+            int((pos[1] - origin_y) // cell_size)]
 
 
 def cell_to_pixel(cell, cell_size, origin_x, origin_y, image_size=(0, 0)):
@@ -164,7 +164,7 @@ class ghost:
         self.image = pygame.image.load(image_path) 
         self.edible = False
         self.edible_start = 0
-        self.edible_duration = 2000
+        self.edible_duration = 20000
 
     def make_edible(self):
         self.edible = True
