@@ -107,6 +107,35 @@ while True:
 
         blinky.moving_algorithm()
         blinky.draw(screen)
+
+        dx = player.pos[0] - blinky.position[0]
+        dy = player.pos[1] - blinky.position[1]
+        if (dx**2 + dy**2)**0.5 < CELL_SIZE / 2:
+            if blinky.edible:
+                blinky.position = list(ghost_start)
+                blinky.image = pygame.image.load(path1)
+                blinky.edible = False
+                var.edible = False
+                blinky.behavior = chase(maze, blinky, player, CELL_SIZE, ORIGIN_X, ORIGIN_Y)
+            else:
+                player.lives -= 1
+                player.pos = [930, 510]
+                var.row = 14
+                var.col = 6
+                blinky.position = list(ghost_start)
+                blinky.behavior.target_pixel = None
+
+        if player.lives <= 0:
+            screen.fill((0,0,0))
+            go_font = pygame.font.SysFont('Corbel', 60)
+            go_text = go_font.render('Game Over', True, (255, 0, 0))
+            go_rect = go_text.get_rect(center=(960, 400))
+            screen.blit(go_text, go_rect)
+            pygame.display.update()
+            pygame.time.wait(3000)
+            pygame.quit()
+            exit()
+
         print(score)
         if num_of_gums+20  == score:
             screen.fill((0,0,0))
@@ -115,6 +144,9 @@ while True:
             screen.blit(win_image,win_rect)
             print("win")
 
+
+    print(f"pacman:{player.pos[0],player.pos[1]}\n")
+    print(f"ghost:{blinky.position}\n")
     pygame.display.update()
     clock.tick(40)
     
