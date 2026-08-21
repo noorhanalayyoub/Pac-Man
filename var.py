@@ -8,3 +8,4 @@ super2=0
 super3=0
 super4=0
 #cell = maze.maze[col][row]
+edible= False
