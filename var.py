@@ -12,5 +12,4 @@ num_of_eaten_gums=0
 edible= False
 level = 1
 timer_start = 0
-LEVEL_TIME = 90000
 level_complete = False

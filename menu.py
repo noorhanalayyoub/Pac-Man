@@ -8,6 +8,7 @@ import collision
 import var
 from pacgums import place_gums,place_super_pacgums,draw_gums,remove_gums
 from ghost import ghost, chase, cell_to_pixel,frightened
+import parser
 
 pygame.init()
 screen = pygame.display.set_mode((1920,1080))
@@ -92,6 +93,7 @@ while True:
         player.draw(screen)
         collided_ghost = player.move(maze,lines,possible_moves, ghosts)
         score= player.ate_gum(gum_rects)
+       # score = player.score
         player.animate()
 
         hud_font = pygame.font.SysFont('Corbel', 30)
@@ -99,7 +101,7 @@ while True:
         score_text = hud_font.render(f'Score: {score}', True, (255, 255, 255))
         level_text = hud_font.render(f'Level: {var.level}', True, (255, 255, 255))
         now = pygame.time.get_ticks()
-        remaining_ms = var.LEVEL_TIME - (now - var.timer_start)
+        remaining_ms = parser.level_max_time - (now - var.timer_start)
         remaining_sec = max(0, remaining_ms // 1000)
         timer_color = (255, 0, 0) if remaining_sec <= 10 else (255, 255, 255)
         timer_text = hud_font.render(f'Time: {remaining_sec}', True, timer_color)
@@ -161,7 +163,7 @@ while True:
                 if (dx**2 + dy**2)**0.5 < CELL_SIZE / 2:
                     g.edible = False
                     g.start_respawn()
-                    player.score += 10
+                    player.score += parser.points_per_ghost
 
         if died:
             if player.lives <= 0:
