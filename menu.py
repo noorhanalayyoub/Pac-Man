@@ -89,11 +89,37 @@ while True:
         gum_rects = draw_gums(screen,maze,gums,var.removed)
         place_super_pacgums(screen,maze)
         player.draw(screen)
-        player.move(maze,lines,possible_moves)
+        collided_ghost = player.move(maze,lines,possible_moves, ghosts)
         score= player.ate_gum(gum_rects)
         player.animate()
 
+        hud_font = pygame.font.SysFont('Corbel', 30)
+        lives_text = hud_font.render(f'Lives: {player.lives}', True, (255, 255, 255))
+        score_text = hud_font.render(f'Score: {score}', True, (255, 255, 255))
+        level_text = hud_font.render(f'Level: {var.level}', True, (255, 255, 255))
+        screen.blit(lives_text, (30, 40))
+        screen.blit(score_text, (960 - score_text.get_width() // 2, 40))
+        screen.blit(level_text, (1920 - level_text.get_width() - 30, 40))
+
         died = False
+        if not collided_ghost:
+            for g in ghosts:
+                if not g.respawning and not g.edible:
+                    dx = player.pos[0] - g.position[0]
+                    dy = player.pos[1] - g.position[1]
+                    if (dx**2 + dy**2)**0.5 < 60:
+                        collided_ghost = g
+                        break
+        if collided_ghost:
+            player.lives -= 1
+            player.pos = [930, 510]
+            var.row = 14
+            var.col = 6
+            for gg, ss in zip(ghosts, ghost_starts):
+                gg.position = list(ss)
+                gg.behavior.target_pixel = None
+            died = True
+
         for g, start in zip(ghosts, ghost_starts):
             was_respawning = g.respawning
             g.update()
@@ -118,25 +144,17 @@ while True:
                 g.edible = False
                 g.behavior = chase(maze, g, player, CELL_SIZE, ORIGIN_X, ORIGIN_Y)
 
-            g.moving_algorithm()
+            if not died:
+                g.moving_algorithm()
             g.draw(screen)
 
-            dx = player.pos[0] - g.position[0]
-            dy = player.pos[1] - g.position[1]
-            if (dx**2 + dy**2)**0.5 < CELL_SIZE / 2:
-                if g.edible:
+            if not died and g.edible:
+                dx = player.pos[0] - g.position[0]
+                dy = player.pos[1] - g.position[1]
+                if (dx**2 + dy**2)**0.5 < CELL_SIZE / 2:
                     g.edible = False
                     g.start_respawn()
-                else:
-                    player.lives -= 1
-                    player.pos = [930, 510]
-                    var.row = 14
-                    var.col = 6
-                    for gg, ss in zip(ghosts, ghost_starts):
-                        gg.position = list(ss)
-                        gg.behavior.target_pixel = None
-                    died = True
-                    break
+                    player.score += 10
 
         if died:
             if player.lives <= 0:
