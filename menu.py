@@ -93,6 +93,14 @@ while True:
         score= player.ate_gum(gum_rects)
         player.animate()
 
+        hud_font = pygame.font.SysFont('Corbel', 30)
+        lives_text = hud_font.render(f'Lives: {player.lives}', True, (255, 255, 255))
+        score_text = hud_font.render(f'Score: {score}', True, (255, 255, 255))
+        level_text = hud_font.render(f'Level: {var.level}', True, (255, 255, 255))
+        screen.blit(lives_text, (30, 40))
+        screen.blit(score_text, (960 - score_text.get_width() // 2, 40))
+        screen.blit(level_text, (1920 - level_text.get_width() - 30, 40))
+
         died = False
         if not collided_ghost:
             for g in ghosts:
@@ -143,9 +151,10 @@ while True:
             if not died and g.edible:
                 dx = player.pos[0] - g.position[0]
                 dy = player.pos[1] - g.position[1]
-                if (dx**2 + dy**2)**0.5 < CELL_SIZE:
+                if (dx**2 + dy**2)**0.5 < CELL_SIZE / 2:
                     g.edible = False
                     g.start_respawn()
+                    player.score += 10
 
         if died:
             if player.lives <= 0:
