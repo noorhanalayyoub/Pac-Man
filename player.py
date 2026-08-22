@@ -32,10 +32,22 @@ class Player():
         self.rect = self.image.get_rect(center= (self.pos[0],self.pos[1]))
         surface.blit(self.image,self.rect)
         
-    def move(self,maze, lines,possible_moves):
+    def check_ghost_collision(self, ghosts):
+        if not ghosts:
+            return None
+        for g in ghosts:
+            if g.respawning or g.edible:
+                continue
+            dx = self.pos[0] - g.position[0]
+            dy = self.pos[1] - g.position[1]
+            if (dx**2 + dy**2)**0.5 < 60:
+                return g
+        return None
+
+    def move(self,maze, lines,possible_moves, ghosts=None):
         now = pygame.time.get_ticks()
         if now - self.move_last < self.move_cooldown:
-            return
+            return None
         self.move_last = now
         keys = pygame.key.get_pressed()
         speed =1
@@ -43,26 +55,39 @@ class Player():
             for i in range (60):
                 self.pos[1] -= speed
                 self.rotate("up")
+                hit = self.check_ghost_collision(ghosts)
+                if hit:
+                    return hit
             if (self.pos[1] - 150)% 60 ==0:
                 var.col -=1
         elif keys[pygame.K_DOWN] and possible_moves["s"]:
             for i in range (60):
                 self.pos[1] +=speed
                 self.rotate("down")
+                hit = self.check_ghost_collision(ghosts)
+                if hit:
+                    return hit
             if (self.pos[1] - 150 )%60 ==0:
                 var.col+=1
         elif keys[pygame.K_RIGHT] and  possible_moves["e"] :
             for i in range (60):
                 self.pos[0]+=speed
                 self.rotate("right")
+                hit = self.check_ghost_collision(ghosts)
+                if hit:
+                    return hit
             if (self.pos[0] - 90)%60 == 0:
                 var.row+=1
         elif keys[pygame.K_LEFT] and possible_moves["w"] :
             for i in range (60):
                 self.pos[0]-=speed
                 self.rotate("left")
+                hit = self.check_ghost_collision(ghosts)
+                if hit:
+                    return hit
             if (self.pos[0] - 90) % 60 == 0:
                 var.row-=1
+        return None
 
     def animate(self):
         now = pygame.time.get_ticks() 
