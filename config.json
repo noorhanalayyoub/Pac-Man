@@ -1,5 +1,5 @@
 {
-	"lives" : 4,
+	"lives" : 10,
 	"points_per_pacgum" : 1,
 	"points_per_super_pacgum" : 5,
 	"points_per_ghost": 10,

@@ -12,15 +12,11 @@ import parser
 
 pygame.init()
 screen = pygame.display.set_mode((1920,1080))
-#screen.fill((255, 192, 203))
 start_button_color=(255,255,255)
 menu = True
 
-seed = random.randint(1,1000)
 player = Player(screen)
-clock = pygame.time.Clock() 
-maze = MazeGenerator(seed=seed,size=(30,14))
-gums,num_of_gums = place_gums(screen,maze)
+clock = pygame.time.Clock()
 
 CELL_SIZE = 60
 ORIGIN_X = 60
@@ -31,11 +27,38 @@ path2 = "scared_1.png"
 ghost_names = ["blinky", "clyde", "twinky", "inky"]
 ghost_starts = [[90, 150], [1830, 150], [90, 930], [1830, 930]]
 
+maze = None
+gums = None
+num_of_gums = 0
 ghosts = []
-for i, name in enumerate(ghost_names):
-    g = ghost(maze, name, None, list(ghost_starts[i]), speed=2, image_path=path1)
-    g.behavior = chase(maze, g, player, CELL_SIZE, ORIGIN_X, ORIGIN_Y)
-    ghosts.append(g)
+
+
+def setup_level(level_seed):
+    global maze, gums, num_of_gums, ghosts
+
+    maze = MazeGenerator(seed=level_seed, size=(30, 14))
+    gums, num_of_gums = place_gums(screen, maze)
+
+    var.removed = []
+    var.num_of_eaten_gums = 0
+    var.super1 = 0
+    var.super2 = 0
+    var.super3 = 0
+    var.super4 = 0
+    var.edible = False
+    var.row = 14
+    var.col = 6
+    var.level_complete = False
+
+    player.pos = [930, 510]
+
+    ghosts = []
+    for i, name in enumerate(ghost_names):
+        g = ghost(maze, name, None, list(ghost_starts[i]), speed=2, image_path=path1)
+        g.behavior = chase(maze, g, player, CELL_SIZE, ORIGIN_X, ORIGIN_Y)
+        ghosts.append(g)
+
+    var.timer_start = pygame.time.get_ticks()
 
 
 frightened_timeout = pygame.USEREVENT + 1
@@ -52,7 +75,8 @@ while True:
                     print("start")
                     start_button_color = (255,0,0)
                     menu = False
-                    var.timer_start = pygame.time.get_ticks()
+                    var.level = 1
+                    setup_level(parser.seed)
                 if exit_button_rect.collidepoint(mouse_pos):
                     pygame.quit()
                     exit()
@@ -93,7 +117,6 @@ while True:
         player.draw(screen)
         collided_ghost = player.move(maze,lines,possible_moves, ghosts)
         score= player.ate_gum(gum_rects)
-       # score = player.score
         player.animate()
 
         hud_font = pygame.font.SysFont('Corbel', 30)
@@ -177,15 +200,26 @@ while True:
                 pygame.quit()
                 exit()
 
-        print(score)
-        if num_of_gums+4  == var.num_of_eaten_gums:
+        if num_of_gums + 4 == var.num_of_eaten_gums and not var.level_complete:
+            var.level_complete = True
+            player.score += 20
             screen.fill((0,0,0))
-            win_image = pygame.image.load('images/win.png').convert_alpha()
-            win_rect = win_image.get_rect(center=(960,200))
-            screen.blit(win_image,win_rect)
-            print("win")
-            var.level += 1
-            var.timer_start = pygame.time.get_ticks()
+            win_font = pygame.font.SysFont('Corbel', 60)
+            if var.level < var.MAX_LEVELS:
+                win_text = win_font.render(f'Level {var.level} Complete!', True, (0, 255, 0))
+            else:
+                win_text = win_font.render('You Win the Game!', True, (0, 255, 0))
+            win_rect = win_text.get_rect(center=(960, 400))
+            screen.blit(win_text, win_rect)
+            pygame.display.update()
+            pygame.time.wait(3000)
+
+            if var.level < var.MAX_LEVELS:
+                var.level += 1
+                setup_level(random.randint(1, 1000))
+            else:
+                pygame.quit()
+                exit()
 
         if remaining_ms <= 0:
             screen.fill((0,0,0))
@@ -199,10 +233,6 @@ while True:
             exit()
 
 
-    print(f"pacman:{player.pos[0],player.pos[1]}\n")
-    for g in ghosts:
-        print(f"{g.name}:{g.position}\n")
     pygame.display.update()
     clock.tick(40)
     
-

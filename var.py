@@ -13,3 +13,4 @@ edible= False
 level = 1
 timer_start = 0
 level_complete = False
+MAX_LEVELS = 2
