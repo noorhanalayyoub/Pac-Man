@@ -50,7 +50,8 @@ while True:
                 if start_button_rect.collidepoint(mouse_pos):
                     print("start")
                     start_button_color = (255,0,0)
-                    menu = False      
+                    menu = False
+                    var.timer_start = pygame.time.get_ticks()
                 if exit_button_rect.collidepoint(mouse_pos):
                     pygame.quit()
                     exit()
@@ -97,8 +98,14 @@ while True:
         lives_text = hud_font.render(f'Lives: {player.lives}', True, (255, 255, 255))
         score_text = hud_font.render(f'Score: {score}', True, (255, 255, 255))
         level_text = hud_font.render(f'Level: {var.level}', True, (255, 255, 255))
+        now = pygame.time.get_ticks()
+        remaining_ms = var.LEVEL_TIME - (now - var.timer_start)
+        remaining_sec = max(0, remaining_ms // 1000)
+        timer_color = (255, 0, 0) if remaining_sec <= 10 else (255, 255, 255)
+        timer_text = hud_font.render(f'Time: {remaining_sec}', True, timer_color)
         screen.blit(lives_text, (30, 40))
         screen.blit(score_text, (960 - score_text.get_width() // 2, 40))
+        screen.blit(timer_text, (1920 - timer_text.get_width() - 30, 10))
         screen.blit(level_text, (1920 - level_text.get_width() - 30, 40))
 
         died = False
@@ -169,12 +176,25 @@ while True:
                 exit()
 
         print(score)
-        if num_of_gums+20  == score:
+        if num_of_gums+4  == var.num_of_eaten_gums:
             screen.fill((0,0,0))
             win_image = pygame.image.load('images/win.png').convert_alpha()
             win_rect = win_image.get_rect(center=(960,200))
             screen.blit(win_image,win_rect)
             print("win")
+            var.level += 1
+            var.timer_start = pygame.time.get_ticks()
+
+        if remaining_ms <= 0:
+            screen.fill((0,0,0))
+            go_font = pygame.font.SysFont('Corbel', 60)
+            go_text = go_font.render('Time\'s Up! Game Over', True, (255, 0, 0))
+            go_rect = go_text.get_rect(center=(960, 400))
+            screen.blit(go_text, go_rect)
+            pygame.display.update()
+            pygame.time.wait(3000)
+            pygame.quit()
+            exit()
 
 
     print(f"pacman:{player.pos[0],player.pos[1]}\n")

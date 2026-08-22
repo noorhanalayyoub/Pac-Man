@@ -125,8 +125,10 @@ class Player():
             #print(gum.x,gum.y)
             if self.pos[0] == gum.x+1 and self.pos[1] == gum.y+1:
                 self.score += 1
+                var.num_of_eaten_gums+=1
                 var.removed.append(gum)
         if self.ate_super():
+            var.num_of_eaten_gums+=1
             self.score += 5 
         return self.score
     def ate_super(self):
