@@ -165,17 +165,27 @@ class ghost:
         self.edible = False
         self.edible_start = 0
         self.edible_duration = 20000
+        self.respawning = False
+        self.respawn_start = 0
+        self.respawn_duration = 5000
 
     def make_edible(self):
         self.edible = True
         self.edible_start = pygame.time.get_ticks()
 
+    def start_respawn(self):
+        self.respawning = True
+        self.respawn_start = pygame.time.get_ticks()
+
     def update(self):
+        if self.respawning:
+            if pygame.time.get_ticks() - self.respawn_start >= self.respawn_duration:
+                self.respawning = False
+            return
         if self.edible:
             current_time = pygame.time.get_ticks()
 
             if current_time - self.edible_start >= self.edible_duration:
-                #self.edible = False
                 var.edible = False
     
     def moving_algorithm(self):

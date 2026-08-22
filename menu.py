@@ -26,11 +26,15 @@ ORIGIN_X = 60
 ORIGIN_Y = 120 
 path1 = "right2.png"
 path2 = "scared_1.png"
-GHOST_IMAGE = pygame.image.load("right2.png")  # same image ghost.__init__ loads
-entry_cell = maze.maze_entry
-ghost_start = cell_to_pixel(entry_cell, CELL_SIZE, ORIGIN_X, ORIGIN_Y, GHOST_IMAGE.get_size())
-blinky = ghost(maze, "blinky", None, ghost_start,speed=2,image_path=path1)
-blinky.behavior = chase(maze, blinky, player, CELL_SIZE, ORIGIN_X, ORIGIN_Y)
+
+ghost_names = ["blinky", "clyde", "twinky", "inky"]
+ghost_starts = [[90, 150], [1830, 150], [90, 930], [1830, 930]]
+
+ghosts = []
+for i, name in enumerate(ghost_names):
+    g = ghost(maze, name, None, list(ghost_starts[i]), speed=2, image_path=path1)
+    g.behavior = chase(maze, g, player, CELL_SIZE, ORIGIN_X, ORIGIN_Y)
+    ghosts.append(g)
 
 
 frightened_timeout = pygame.USEREVENT + 1
@@ -39,9 +43,6 @@ while True:
         if event.type==pygame.QUIT:
             pygame.quit()
             exit()
-        #if event.type == frightened_timeout:
-         #    pygame.time.set_timer(frightened_timeout, 20000)
-          #   blinky.behavior =(maze, blinky, player, CELL_SIZE, ORIGIN_X, ORIGIN_Y)
 
         if menu:
             if event.type == pygame.MOUSEBUTTONDOWN:
@@ -92,49 +93,62 @@ while True:
         score= player.ate_gum(gum_rects)
         player.animate()
 
-        #blinky.moving_algorithm()
-        #blinky.draw(screen)
-        blinky.update()
-        if var.edible and not blinky.edible:
-            blinky.image=pygame.image.load(path2)
-            blinky.make_edible()
-            blinky.behavior=frightened(maze,blinky,player,CELL_SIZE,ORIGIN_X,ORIGIN_Y)
-        if not var.edible and blinky.edible:
-            blinky.image= pygame.image.load(path1)
-            blinky.edible = False
-            blinky.behavior = chase(maze, blinky, player,
-                                    CELL_SIZE, ORIGIN_X, ORIGIN_Y)
+        died = False
+        for g, start in zip(ghosts, ghost_starts):
+            was_respawning = g.respawning
+            g.update()
 
-        blinky.moving_algorithm()
-        blinky.draw(screen)
+            if was_respawning and not g.respawning:
+                g.position = list(start)
+                g.image = pygame.image.load(path1)
+                g.behavior = chase(maze, g, player, CELL_SIZE, ORIGIN_X, ORIGIN_Y)
+                g.behavior.target_pixel = None
+                g.draw(screen)
+                continue
 
-        dx = player.pos[0] - blinky.position[0]
-        dy = player.pos[1] - blinky.position[1]
-        if (dx**2 + dy**2)**0.5 < CELL_SIZE / 2:
-            if blinky.edible:
-                blinky.position = list(ghost_start)
-                blinky.image = pygame.image.load(path1)
-                blinky.edible = False
-                var.edible = False
-                blinky.behavior = chase(maze, blinky, player, CELL_SIZE, ORIGIN_X, ORIGIN_Y)
-            else:
-                player.lives -= 1
-                player.pos = [930, 510]
-                var.row = 14
-                var.col = 6
-                blinky.position = list(ghost_start)
-                blinky.behavior.target_pixel = None
+            if g.respawning:
+                continue
 
-        if player.lives <= 0:
-            screen.fill((0,0,0))
-            go_font = pygame.font.SysFont('Corbel', 60)
-            go_text = go_font.render('Game Over', True, (255, 0, 0))
-            go_rect = go_text.get_rect(center=(960, 400))
-            screen.blit(go_text, go_rect)
-            pygame.display.update()
-            pygame.time.wait(3000)
-            pygame.quit()
-            exit()
+            if var.edible and not g.edible:
+                g.image = pygame.image.load(path2)
+                g.make_edible()
+                g.behavior = frightened(maze, g, player, CELL_SIZE, ORIGIN_X, ORIGIN_Y)
+            if not var.edible and g.edible:
+                g.image = pygame.image.load(path1)
+                g.edible = False
+                g.behavior = chase(maze, g, player, CELL_SIZE, ORIGIN_X, ORIGIN_Y)
+
+            g.moving_algorithm()
+            g.draw(screen)
+
+            dx = player.pos[0] - g.position[0]
+            dy = player.pos[1] - g.position[1]
+            if (dx**2 + dy**2)**0.5 < CELL_SIZE / 2:
+                if g.edible:
+                    g.edible = False
+                    g.start_respawn()
+                else:
+                    player.lives -= 1
+                    player.pos = [930, 510]
+                    var.row = 14
+                    var.col = 6
+                    for gg, ss in zip(ghosts, ghost_starts):
+                        gg.position = list(ss)
+                        gg.behavior.target_pixel = None
+                    died = True
+                    break
+
+        if died:
+            if player.lives <= 0:
+                screen.fill((0,0,0))
+                go_font = pygame.font.SysFont('Corbel', 60)
+                go_text = go_font.render('Game Over', True, (255, 0, 0))
+                go_rect = go_text.get_rect(center=(960, 400))
+                screen.blit(go_text, go_rect)
+                pygame.display.update()
+                pygame.time.wait(3000)
+                pygame.quit()
+                exit()
 
         print(score)
         if num_of_gums+20  == score:
@@ -146,7 +160,8 @@ while True:
 
 
     print(f"pacman:{player.pos[0],player.pos[1]}\n")
-    print(f"ghost:{blinky.position}\n")
+    for g in ghosts:
+        print(f"{g.name}:{g.position}\n")
     pygame.display.update()
     clock.tick(40)
     
