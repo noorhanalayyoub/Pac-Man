@@ -102,7 +102,7 @@ class Player():
                 self.score += 1
                 var.removed.append(gum)
         if self.ate_super():
-            self.score += 5
+            self.score += 5 
         return self.score
     def ate_super(self):
         if self.pos[0] == 90 and self.pos[1] == 150 and not var.super1:
@@ -111,6 +111,7 @@ class Player():
             var.super1 = 1
             print("super")
             remove_gums(self.surface,x=90,y=150)
+            var.edible = True
             return True
         elif self.pos[0] == 1830 and self.pos[1] == 150 and not var.super2:
             x=1830
@@ -118,6 +119,7 @@ class Player():
             var.super2 = 1
             print("super")
             remove_gums(self.surface,x=1830,y=150)
+            var.edible = True
             return True
         elif self.pos[0] == 90 and self.pos[1] == 930 and not var.super3:
             x=90
@@ -125,7 +127,7 @@ class Player():
             var.super3 = 1
             print("super")
             remove_gums(self.surface,x=90,y=930)
-
+            var.edible = True
             return True
 
         elif self.pos[0] == 1830 and self.pos[1] == 930 and not var.super4:
@@ -134,6 +136,7 @@ class Player():
             var.super4 = 1
             print("super")
             remove_gums(self.surface,x=1830,y=930)  
+            var.edible = True
             return True
     
 
