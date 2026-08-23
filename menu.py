@@ -52,8 +52,6 @@ def setup_level(level_seed):
     var.level_complete = False
 
     player.pos = [930, 510]
-    player.score = 0
-    player.lives = parser.lives
 
     ghosts = []
     for i, name in enumerate(ghost_names):
@@ -79,6 +77,8 @@ while True:
                     start_button_color = (255,0,0)
                     menu = False
                     var.level = 1
+                    player.score = 0
+                    player.lives = parser.lives
                     setup_level(parser.seed)
                 if high_score_rect.collidepoint(mouse_pos):
                     display_scoreboard(screen)
