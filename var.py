@@ -14,3 +14,5 @@ level = 1
 timer_start = 0
 level_complete = False
 MAX_LEVELS = 10
+paused = False
+pause_time = 0
