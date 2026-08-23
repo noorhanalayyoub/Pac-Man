@@ -17,6 +17,12 @@ def display_instructions(screen):
         "Press Escape to pause the game",
     ]
 
+    cheat_instructions = [
+        "Press C to toggle Cheat Mode",
+        "Cheat Mode: endless lives and no timer",
+        "Press N to skip to the next level",
+    ]
+
     waiting = True
     while waiting:
         for event in pygame.event.get():
@@ -28,13 +34,22 @@ def display_instructions(screen):
 
         screen.fill((0, 0, 0))
         title = font_title.render("How To Play", True, (255, 215, 0))
-        screen.blit(title, (960 - title.get_width() // 2, 100))
+        screen.blit(title, (960 - title.get_width() // 2, 60))
 
-        y = 200
+        y = 140
         for line in instructions:
             surf = font_text.render(line, True, (255, 255, 255))
             screen.blit(surf, (960 - surf.get_width() // 2, y))
-            y += 50
+            y += 45
+
+        y += 20
+        cheat_title = font_text.render("Cheat Mode", True, (255, 255, 0))
+        screen.blit(cheat_title, (960 - cheat_title.get_width() // 2, y))
+        y += 50
+        for line in cheat_instructions:
+            surf = font_text.render(line, True, (255, 255, 0))
+            screen.blit(surf, (960 - surf.get_width() // 2, y))
+            y += 45
 
         hint = font_hint.render("Press any key to return", True, (150, 150, 150))
         screen.blit(hint, (960 - hint.get_width() // 2, 700))

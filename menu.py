@@ -89,6 +89,13 @@ while True:
                     menu = True
             continue
 
+        if event.type == pygame.KEYDOWN and not menu:
+            if event.key == pygame.K_c:
+                var.cheat_mode = not var.cheat_mode
+            if event.key == pygame.K_n and var.cheat_mode and var.level < var.MAX_LEVELS:
+                var.level += 1
+                setup_level(random.randint(1, 1000))
+
         if menu:
             if event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = pygame.mouse.get_pos()
@@ -99,6 +106,7 @@ while True:
                     var.level = 1
                     player.score = 0
                     player.lives = parser.lives
+                    var.cheat_mode = False
                     setup_level(parser.seed)
                 if high_score_rect.collidepoint(mouse_pos):
                     display_scoreboard(screen)
@@ -154,7 +162,10 @@ while True:
             score = player.score
 
         hud_font = pygame.font.SysFont('Corbel', 30)
-        lives_text = hud_font.render(f'Lives: {player.lives}', True, (255, 255, 255))
+        if var.cheat_mode:
+            lives_text = hud_font.render('Lives: \u221e', True, (255, 255, 0))
+        else:
+            lives_text = hud_font.render(f'Lives: {player.lives}', True, (255, 255, 255))
         score_text = hud_font.render(f'Score: {score}', True, (255, 255, 255))
         level_text = hud_font.render(f'Level: {var.level}', True, (255, 255, 255))
         now = pygame.time.get_ticks()
@@ -163,12 +174,18 @@ while True:
         else:
             remaining_ms = parser.level_max_time - (now - var.timer_start)
         remaining_sec = max(0, remaining_ms // 1000)
-        timer_color = (255, 0, 0) if remaining_sec <= 10 else (255, 255, 255)
-        timer_text = hud_font.render(f'Time: {remaining_sec}', True, timer_color)
+        if var.cheat_mode:
+            timer_text = hud_font.render('Time: \u221e', True, (255, 255, 0))
+        else:
+            timer_color = (255, 0, 0) if remaining_sec <= 10 else (255, 255, 255)
+            timer_text = hud_font.render(f'Time: {remaining_sec}', True, timer_color)
         screen.blit(lives_text, (30, 40))
         screen.blit(score_text, (960 - score_text.get_width() // 2, 40))
         screen.blit(timer_text, (1920 - timer_text.get_width() - 30, 10))
         screen.blit(level_text, (1920 - level_text.get_width() - 30, 40))
+        if var.cheat_mode:
+            cheat_text = hud_font.render('CHEAT MODE', True, (255, 255, 0))
+            screen.blit(cheat_text, (30, 10))
 
         if not var.paused:
             died = False
@@ -181,7 +198,8 @@ while True:
                             collided_ghost = g
                             break
             if collided_ghost:
-                player.lives -= 1
+                if not var.cheat_mode:
+                    player.lives -= 1
                 player.pos = [930, 510]
                 var.row = 14
                 var.col = 6
@@ -261,7 +279,7 @@ while True:
                     display_scoreboard(screen)
                     menu = True
 
-            if remaining_ms <= 0:
+            if remaining_ms <= 0 and not var.cheat_mode:
                 screen.fill((0,0,0))
                 go_font = pygame.font.SysFont('Corbel', 60)
                 go_text = go_font.render('Time\'s Up! Game Over', True, (255, 0, 0))

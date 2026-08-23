@@ -16,3 +16,4 @@ level_complete = False
 MAX_LEVELS = 10
 paused = False
 pause_time = 0
+cheat_mode = False
