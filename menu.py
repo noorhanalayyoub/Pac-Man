@@ -10,6 +10,7 @@ from pacgums import place_gums,place_super_pacgums,draw_gums,remove_gums
 from ghost import ghost, chase, cell_to_pixel,frightened
 import parser
 from scoreboard import add_score, get_player_name, display_scoreboard
+from instructions import display_instructions
 
 pygame.init()
 screen = pygame.display.set_mode((1920,1080))
@@ -101,6 +102,9 @@ while True:
                     setup_level(parser.seed)
                 if high_score_rect.collidepoint(mouse_pos):
                     display_scoreboard(screen)
+                    screen.fill((0, 0, 0))
+                if instructions_rect.collidepoint(mouse_pos):
+                    display_instructions(screen)
                     screen.fill((0, 0, 0))
                 if exit_button_rect.collidepoint(mouse_pos):
                     pygame.quit()
