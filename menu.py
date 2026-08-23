@@ -9,6 +9,7 @@ import var
 from pacgums import place_gums,place_super_pacgums,draw_gums,remove_gums
 from ghost import ghost, chase, cell_to_pixel,frightened
 import parser
+from scoreboard import add_score, get_player_name, display_scoreboard
 
 pygame.init()
 screen = pygame.display.set_mode((1920,1080))
@@ -51,6 +52,8 @@ def setup_level(level_seed):
     var.level_complete = False
 
     player.pos = [930, 510]
+    player.score = 0
+    player.lives = parser.lives
 
     ghosts = []
     for i, name in enumerate(ghost_names):
@@ -77,6 +80,9 @@ while True:
                     menu = False
                     var.level = 1
                     setup_level(parser.seed)
+                if high_score_rect.collidepoint(mouse_pos):
+                    display_scoreboard(screen)
+                    screen.fill((0, 0, 0))
                 if exit_button_rect.collidepoint(mouse_pos):
                     pygame.quit()
                     exit()
@@ -218,8 +224,10 @@ while True:
                 var.level += 1
                 setup_level(random.randint(1, 1000))
             else:
-                pygame.quit()
-                exit()
+                name = get_player_name(screen)
+                add_score(name, player.score)
+                display_scoreboard(screen)
+                menu = True
 
         if remaining_ms <= 0:
             screen.fill((0,0,0))
