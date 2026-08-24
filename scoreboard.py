@@ -75,7 +75,9 @@ def get_player_name(screen: pygame.Surface) -> str:
         pygame.draw.rect(screen, (50, 50, 50), name_rect.inflate(20, 10))
         screen.blit(name_surface, name_rect)
 
-        hint = small_font.render("Press Enter to confirm", True, (150, 150, 150))
+        hint = small_font.render(
+            "Press Enter to confirm", True, (150, 150, 150)
+        )
         screen.blit(hint, (960 - hint.get_width() // 2, 470))
 
         pygame.display.update()
@@ -106,7 +108,7 @@ def display_scoreboard(screen: pygame.Surface) -> None:
 
         y = 160
         for i, entry in enumerate(scores):
-            rank_text = f"{i+1}."
+            rank_text = f"{i + 1}."
             name_text = entry["name"]
             score_text = str(entry["score"])
 
@@ -120,10 +122,14 @@ def display_scoreboard(screen: pygame.Surface) -> None:
             y += 40
 
         if not scores:
-            no_scores = font_entry.render("No scores yet!", True, (150, 150, 150))
+            no_scores = font_entry.render(
+                "No scores yet!", True, (150, 150, 150)
+            )
             screen.blit(no_scores, (960 - no_scores.get_width() // 2, 250))
 
-        hint = font_hint.render("Press any key to continue", True, (150, 150, 150))
+        hint = font_hint.render(
+            "Press any key to continue", True, (150, 150, 150)
+        )
         screen.blit(hint, (960 - hint.get_width() // 2, 700))
 
         pygame.display.update()

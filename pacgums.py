@@ -1,79 +1,106 @@
-import random 
+import random
 import pygame
 import var
 from mazegenerator import MazeGenerator
 
 
-l = [1,1,1,1,1,0]
+GUM_CHANCE = [1, 1, 1, 1, 1, 0]
+
+
 def place_gums(
-        surface: pygame.Surface,
-        maze: MazeGenerator) -> tuple[list[list[int]], int]:
+    surface: pygame.Surface, maze: MazeGenerator
+) -> tuple[list[list[int]], int]:
     total_gums = []
-    num_of_gums= 0
+    num_of_gums = 0
     grid = maze.maze
     x = 60
     y = 120
     r = 0
-    for row in grid :
+    for row in grid:
         gum_row: list[int] = []
         x = 60
-        r+=1
-        c=0
+        r += 1
+        c = 0
         for cell in row:
-            c+=1 
-            if (random.choice(l) and not cell == 15) and (not ( (r==1 and (c==1 or c==30)) or (r==14 and (c==1 or c==30)) or(r== 7 and c == 15) )):
+            c += 1
+            if (random.choice(GUM_CHANCE) and not cell == 15) and (
+                not (
+                    (r == 1 and (c == 1 or c == 30))
+                    or (r == 14 and (c == 1 or c == 30))
+                    or (r == 7 and c == 15)
+                )
+            ):
                 gum_row.append(1)
-                num_of_gums+=1
-                    #pygame.draw.circle(surface,(255,255,255),(x+30,y+30),1)
+                num_of_gums += 1
+                # pygame.draw.circle(surface,(255,255,255),(x+30,y+30),1)
             else:
                 gum_row.append(0)
-            x +=60
+            x += 60
         total_gums.append(gum_row)
-        y+=60
-    return total_gums,num_of_gums
+        y += 60
+    return total_gums, num_of_gums
+
 
 def draw_gums(
-        surface: pygame.Surface,
-        maze: MazeGenerator,
-        gums: list[list[int]],
-        removed: list[pygame.Rect]) -> list[pygame.Rect]:
-    gums_rects=[]
+    surface: pygame.Surface,
+    maze: MazeGenerator,
+    gums: list[list[int]],
+    removed: list[pygame.Rect],
+) -> list[pygame.Rect]:
+    gums_rects = []
     grid = maze.maze
     x = 60
     y = 120
-    for r,row in enumerate (grid) :
+    for r, row in enumerate(grid):
         x = 60
-        for c,cell in enumerate (row):
+        for c, cell in enumerate(row):
             if gums[r][c]:
-                gum=pygame.draw.circle(surface,(255,255,255),(x+30,y+30),1)
+                gum = pygame.draw.circle(
+                    surface, (255, 255, 255), (x + 30, y + 30), 1
+                )
                 if gum not in removed:
                     gums_rects.append(gum)
                 else:
-                    gum=pygame.draw.circle(surface,(0,0,0),(x+30,y+30),1)
-                    #remove_gums(gums_rects)
-            x +=60
-        y+=60   
+                    gum = pygame.draw.circle(
+                        surface, (0, 0, 0), (x + 30, y + 30), 1
+                    )
+                    # remove_gums(gums_rects)
+            x += 60
+        y += 60
     return gums_rects
 
+
 def remove_gums(surface: pygame.Surface, x: int, y: int) -> None:
-    #if var.removed:
-     #gum = var.removed[0]
-      #gums_rects.remove(gum)
-      pygame.draw.circle(surface,(0,0,0),(x,y),3)
-        
+    # if var.removed:
+    # gum = var.removed[0]
+    # gums_rects.remove(gum)
+    pygame.draw.circle(surface, (0, 0, 0), (x, y), 3)
+
+
 def place_super_pacgums(surface: pygame.Surface, maze: MazeGenerator) -> None:
     grid = maze.maze
     x = 60
     y = 120
     r = 0
-    for row in grid :
+    for row in grid:
         x = 60
-        r+=1
-        c=0
+        r += 1
+        c = 0
         for cell in row:
-            c+=1  
-            if ( (r==1 and ( (c==1 and not var.super1) or ( (c==30 and not var.super2) ) )) or (r==14 and ((c==1 and not var.super3) or( c==30 and not var.super4)))) :
-                pygame.draw.circle(surface,(255,255,255),(x+30,y+30),3)
-            x+=60
-        y+=60
-    
+            c += 1
+            if (
+                r == 1
+                and (
+                    (c == 1 and not var.super1) or (c == 30 and not var.super2)
+                )
+            ) or (
+                r == 14
+                and (
+                    (c == 1 and not var.super3) or (c == 30 and not var.super4)
+                )
+            ):
+                pygame.draw.circle(
+                    surface, (255, 255, 255), (x + 30, y + 30), 3
+                )
+            x += 60
+        y += 60

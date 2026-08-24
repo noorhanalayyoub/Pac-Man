@@ -1,21 +1,21 @@
-import pygame 
-from sys import exit 
+import pygame
+from sys import exit
 from mazegenerator import MazeGenerator
 from maze_visualizer import display_maze
 from player import Player
 import random
-import collision 
+import collision
 import var
-from pacgums import place_gums,place_super_pacgums,draw_gums,remove_gums
-from ghost import ghost, chase, cell_to_pixel,frightened
+from pacgums import draw_gums, place_gums, place_super_pacgums
+from ghost import ghost, chase, frightened
 import parser
 from scoreboard import add_score, get_player_name, display_scoreboard
 from instructions import display_instructions
 
 pygame.init()
-screen = pygame.display.set_mode((1920,1080))
+screen = pygame.display.set_mode((1920, 1080))
 pygame.display.set_caption("pacman")
-start_button_color=(255,255,255)
+start_button_color = (255, 255, 255)
 menu = True
 
 player = Player(screen)
@@ -23,7 +23,7 @@ clock = pygame.time.Clock()
 
 CELL_SIZE = 60
 ORIGIN_X = 60
-ORIGIN_Y = 120 
+ORIGIN_Y = 120
 path1 = "right2.png"
 path2 = "scared_1.png"
 
@@ -69,7 +69,9 @@ def setup_level(level_seed: int) -> None:
 
     ghosts = []
     for i, name in enumerate(ghost_names):
-        g = ghost(maze, name, None, list(ghost_starts[i]), speed=2, image_path=path1)
+        g = ghost(
+            maze, name, None, list(ghost_starts[i]), speed=2, image_path=path1
+        )
         g.behavior = chase(maze, g, player, CELL_SIZE, ORIGIN_X, ORIGIN_Y)
         ghosts.append(g)
 
@@ -79,11 +81,15 @@ def setup_level(level_seed: int) -> None:
 frightened_timeout = pygame.USEREVENT + 1
 while True:
     for event in pygame.event.get():
-        if event.type==pygame.QUIT:
+        if event.type == pygame.QUIT:
             pygame.quit()
             exit()
 
-        if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE and not menu:
+        if (
+            event.type == pygame.KEYDOWN
+            and event.key == pygame.K_ESCAPE
+            and not menu
+        ):
             var.paused = not var.paused
             if var.paused:
                 var.pause_time = pygame.time.get_ticks()
@@ -95,7 +101,9 @@ while True:
                 mouse_pos = pygame.mouse.get_pos()
                 if resume_rect and point_in_rect(resume_rect, mouse_pos):
                     var.paused = False
-                if quit_to_menu_rect and point_in_rect(quit_to_menu_rect, mouse_pos):
+                if quit_to_menu_rect and point_in_rect(
+                    quit_to_menu_rect, mouse_pos
+                ):
                     var.paused = False
                     menu = True
             continue
@@ -103,102 +111,126 @@ while True:
         if event.type == pygame.KEYDOWN and not menu:
             if event.key == pygame.K_c:
                 var.cheat_mode = not var.cheat_mode
-            if event.key == pygame.K_n and var.cheat_mode and var.level < var.MAX_LEVELS:
+            if (
+                event.key == pygame.K_n
+                and var.cheat_mode
+                and var.level < var.MAX_LEVELS
+            ):
                 var.level += 1
                 setup_level(random.randint(1, 1000))
 
         if menu:
             if event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = pygame.mouse.get_pos()
-                if (start_button_rect is not None
-                        and point_in_rect(start_button_rect, mouse_pos)):
-                    start_button_color = (255,0,0)
+                if start_button_rect is not None and point_in_rect(
+                    start_button_rect, mouse_pos
+                ):
+                    start_button_color = (255, 0, 0)
                     menu = False
                     var.level = 1
                     player.score = 0
                     player.lives = parser.lives
                     var.cheat_mode = False
                     setup_level(parser.seed)
-                if (high_score_rect is not None
-                        and point_in_rect(high_score_rect, mouse_pos)):
+                if high_score_rect is not None and point_in_rect(
+                    high_score_rect, mouse_pos
+                ):
                     display_scoreboard(screen)
                     screen.fill((0, 0, 0))
-                if (instructions_rect is not None
-                        and point_in_rect(instructions_rect, mouse_pos)):
+                if instructions_rect is not None and point_in_rect(
+                    instructions_rect, mouse_pos
+                ):
                     display_instructions(screen)
                     screen.fill((0, 0, 0))
-                if (exit_button_rect is not None
-                        and point_in_rect(exit_button_rect, mouse_pos)):
+                if exit_button_rect is not None and point_in_rect(
+                    exit_button_rect, mouse_pos
+                ):
                     pygame.quit()
                     exit()
- 
-    if menu :
+
+    if menu:
         screen.fill((0, 0, 0))
-        #title
-        title = pygame.image.load('images/pacman_title.jpg').convert_alpha()
-        title_rect = title.get_rect(center=(960,200))
-        #font
-        smallfont = pygame.font.SysFont('Corbel',35)
+        # title
+        title = pygame.image.load("images/pacman_title.jpg").convert_alpha()
+        title_rect = title.get_rect(center=(960, 200))
+        # font
+        smallfont = pygame.font.SysFont("Corbel", 35)
 
-        #start button 
-        start_button = smallfont.render('Start Game',True , start_button_color)
-        start_button_rect = start_button.get_rect(center=(960,360))
-        #high score
-        high_score_button = smallfont.render('View Highscores',True, start_button_color)
-        high_score_rect = high_score_button.get_rect(center =(960,400))
+        # start button
+        start_button = smallfont.render("Start Game", True, start_button_color)
+        start_button_rect = start_button.get_rect(center=(960, 360))
+        # high score
+        high_score_button = smallfont.render(
+            "View Highscores", True, start_button_color
+        )
+        high_score_rect = high_score_button.get_rect(center=(960, 400))
         # instructions
-        instructions_button =smallfont.render('Instructions',True, start_button_color)
-        instructions_rect = instructions_button.get_rect(center=(960,450))
+        instructions_button = smallfont.render(
+            "Instructions", True, start_button_color
+        )
+        instructions_rect = instructions_button.get_rect(center=(960, 450))
 
-        #exit
-        exit_button = smallfont.render('Exit',True , (255,255,255))
-        exit_button_rect = exit_button.get_rect(center = (960,500))
+        # exit
+        exit_button = smallfont.render("Exit", True, (255, 255, 255))
+        exit_button_rect = exit_button.get_rect(center=(960, 500))
 
-        screen.blit(exit_button,exit_button_rect)
-        screen.blit(start_button,start_button_rect)
-        screen.blit(title,title_rect)
-        screen.blit(high_score_button ,high_score_rect)
-        screen.blit(instructions_button ,instructions_rect)
-        
+        screen.blit(exit_button, exit_button_rect)
+        screen.blit(start_button, start_button_rect)
+        screen.blit(title, title_rect)
+        screen.blit(high_score_button, high_score_rect)
+        screen.blit(instructions_button, instructions_rect)
+
     else:
         if not var.paused:
-            possible_moves=collision.get_possible_moves(maze.maze[var.col][var.row])
-        screen.fill((0,0,0))
-        lines= display_maze(maze,screen)
-        gum_rects = draw_gums(screen,maze,gums,var.removed)
-        place_super_pacgums(screen,maze)
+            possible_moves = collision.get_possible_moves(
+                maze.maze[var.col][var.row]
+            )
+        screen.fill((0, 0, 0))
+        lines = display_maze(maze, screen)
+        gum_rects = draw_gums(screen, maze, gums, var.removed)
+        place_super_pacgums(screen, maze)
         player.draw(screen)
         if not var.paused:
-            collided_ghost = player.move(maze,lines,possible_moves, ghosts)
-            score= player.ate_gum(gum_rects)
+            collided_ghost = player.move(maze, lines, possible_moves, ghosts)
+            score = player.ate_gum(gum_rects)
             player.animate()
         else:
             score = player.score
 
-        hud_font = pygame.font.SysFont('Corbel', 30)
+        hud_font = pygame.font.SysFont("Corbel", 30)
         if var.cheat_mode:
-            lives_text = hud_font.render('Lives: \u221e', True, (255, 255, 0))
+            lives_text = hud_font.render("Lives: \u221e", True, (255, 255, 0))
         else:
-            lives_text = hud_font.render(f'Lives: {player.lives}', True, (255, 255, 255))
-        score_text = hud_font.render(f'Score: {score}', True, (255, 255, 255))
-        level_text = hud_font.render(f'Level: {var.level}', True, (255, 255, 255))
+            lives_text = hud_font.render(
+                f"Lives: {player.lives}", True, (255, 255, 255)
+            )
+        score_text = hud_font.render(f"Score: {score}", True, (255, 255, 255))
+        level_text = hud_font.render(
+            f"Level: {var.level}", True, (255, 255, 255)
+        )
         now = pygame.time.get_ticks()
         if var.paused:
-            remaining_ms = parser.level_max_time - (var.pause_time - var.timer_start)
+            remaining_ms = parser.level_max_time - (
+                var.pause_time - var.timer_start
+            )
         else:
             remaining_ms = parser.level_max_time - (now - var.timer_start)
         remaining_sec = max(0, remaining_ms // 1000)
         if var.cheat_mode:
-            timer_text = hud_font.render('Time: \u221e', True, (255, 255, 0))
+            timer_text = hud_font.render("Time: \u221e", True, (255, 255, 0))
         else:
-            timer_color = (255, 0, 0) if remaining_sec <= 10 else (255, 255, 255)
-            timer_text = hud_font.render(f'Time: {remaining_sec}', True, timer_color)
+            timer_color = (
+                (255, 0, 0) if remaining_sec <= 10 else (255, 255, 255)
+            )
+            timer_text = hud_font.render(
+                f"Time: {remaining_sec}", True, timer_color
+            )
         screen.blit(lives_text, (30, 40))
         screen.blit(score_text, (960 - score_text.get_width() // 2, 40))
         screen.blit(timer_text, (1920 - timer_text.get_width() - 30, 10))
         screen.blit(level_text, (1920 - level_text.get_width() - 30, 40))
         if var.cheat_mode:
-            cheat_text = hud_font.render('CHEAT MODE', True, (255, 255, 0))
+            cheat_text = hud_font.render("CHEAT MODE", True, (255, 255, 0))
             screen.blit(cheat_text, (30, 10))
 
         if not var.paused:
@@ -208,7 +240,7 @@ while True:
                     if not g.respawning and not g.edible:
                         dx = player.pos[0] - g.position[0]
                         dy = player.pos[1] - g.position[1]
-                        if (dx**2 + dy**2)**0.5 < 60:
+                        if (dx**2 + dy**2) ** 0.5 < 60:
                             collided_ghost = g
                             break
             if collided_ghost:
@@ -230,7 +262,9 @@ while True:
                 if was_respawning and not g.respawning:
                     g.position = list(start)
                     g.image = pygame.image.load(path1)
-                    behavior = chase(maze, g, player, CELL_SIZE, ORIGIN_X, ORIGIN_Y)
+                    behavior = chase(
+                        maze, g, player, CELL_SIZE, ORIGIN_X, ORIGIN_Y
+                    )
                     g.behavior = behavior
                     behavior.target_pixel = None
                     g.draw(screen)
@@ -242,11 +276,15 @@ while True:
                 if var.edible and not g.edible:
                     g.image = pygame.image.load(path2)
                     g.make_edible()
-                    g.behavior = frightened(maze, g, player, CELL_SIZE, ORIGIN_X, ORIGIN_Y)
+                    g.behavior = frightened(
+                        maze, g, player, CELL_SIZE, ORIGIN_X, ORIGIN_Y
+                    )
                 if not var.edible and g.edible:
                     g.image = pygame.image.load(path1)
                     g.edible = False
-                    g.behavior = chase(maze, g, player, CELL_SIZE, ORIGIN_X, ORIGIN_Y)
+                    g.behavior = chase(
+                        maze, g, player, CELL_SIZE, ORIGIN_X, ORIGIN_Y
+                    )
 
                 if not died:
                     g.moving_algorithm()
@@ -255,16 +293,16 @@ while True:
                 if not died and g.edible:
                     dx = player.pos[0] - g.position[0]
                     dy = player.pos[1] - g.position[1]
-                    if (dx**2 + dy**2)**0.5 < CELL_SIZE / 2:
+                    if (dx**2 + dy**2) ** 0.5 < CELL_SIZE / 2:
                         g.edible = False
                         g.start_respawn()
                         player.score += parser.points_per_ghost
 
             if died:
                 if player.lives <= 0:
-                    screen.fill((0,0,0))
-                    go_font = pygame.font.SysFont('Corbel', 60)
-                    go_text = go_font.render('Game Over', True, (255, 0, 0))
+                    screen.fill((0, 0, 0))
+                    go_font = pygame.font.SysFont("Corbel", 60)
+                    go_text = go_font.render("Game Over", True, (255, 0, 0))
                     go_rect = go_text.get_rect(center=(960, 400))
                     screen.blit(go_text, go_rect)
                     pygame.display.update()
@@ -272,15 +310,22 @@ while True:
                     pygame.quit()
                     exit()
 
-            if num_of_gums + 4 == var.num_of_eaten_gums and not var.level_complete:
+            if (
+                num_of_gums + 4 == var.num_of_eaten_gums
+                and not var.level_complete
+            ):
                 var.level_complete = True
                 player.score += 20
-                screen.fill((0,0,0))
-                win_font = pygame.font.SysFont('Corbel', 60)
+                screen.fill((0, 0, 0))
+                win_font = pygame.font.SysFont("Corbel", 60)
                 if var.level < var.MAX_LEVELS:
-                    win_text = win_font.render(f'Level {var.level} Complete!', True, (0, 255, 0))
+                    win_text = win_font.render(
+                        f"Level {var.level} Complete!", True, (0, 255, 0)
+                    )
                 else:
-                    win_text = win_font.render('You Win the Game!', True, (0, 255, 0))
+                    win_text = win_font.render(
+                        "You Win the Game!", True, (0, 255, 0)
+                    )
                 win_rect = win_text.get_rect(center=(960, 400))
                 screen.blit(win_text, win_rect)
                 pygame.display.update()
@@ -296,9 +341,11 @@ while True:
                     menu = True
 
             if remaining_ms <= 0 and not var.cheat_mode:
-                screen.fill((0,0,0))
-                go_font = pygame.font.SysFont('Corbel', 60)
-                go_text = go_font.render('Time\'s Up! Game Over', True, (255, 0, 0))
+                screen.fill((0, 0, 0))
+                go_font = pygame.font.SysFont("Corbel", 60)
+                go_text = go_font.render(
+                    "Time's Up! Game Over", True, (255, 0, 0)
+                )
                 go_rect = go_text.get_rect(center=(960, 400))
                 screen.blit(go_text, go_rect)
                 pygame.display.update()
@@ -313,20 +360,18 @@ while True:
             overlay.fill((0, 0, 0, 150))
             screen.blit(overlay, (0, 0))
 
-            pause_font = pygame.font.SysFont('Corbel', 60)
-            pause_title = pause_font.render('PAUSED', True, (255, 255, 255))
+            pause_font = pygame.font.SysFont("Corbel", 60)
+            pause_title = pause_font.render("PAUSED", True, (255, 255, 255))
             screen.blit(pause_title, (960 - pause_title.get_width() // 2, 300))
 
-            btn_font = pygame.font.SysFont('Corbel', 40)
-            resume_btn = btn_font.render('Resume', True, (255, 255, 255))
+            btn_font = pygame.font.SysFont("Corbel", 40)
+            resume_btn = btn_font.render("Resume", True, (255, 255, 255))
             resume_rect = resume_btn.get_rect(center=(960, 420))
             screen.blit(resume_btn, resume_rect)
 
-            quit_menu_btn = btn_font.render('Main Menu', True, (255, 255, 255))
+            quit_menu_btn = btn_font.render("Main Menu", True, (255, 255, 255))
             quit_to_menu_rect = quit_menu_btn.get_rect(center=(960, 500))
             screen.blit(quit_menu_btn, quit_to_menu_rect)
 
-
     pygame.display.update()
     clock.tick(40)
-    
