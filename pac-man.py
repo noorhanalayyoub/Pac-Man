@@ -38,6 +38,12 @@ resume_rect = None
 quit_to_menu_rect = None
 
 
+def point_in_rect(rect, point):
+    """Return whether a point is inside a rectangle."""
+    x, y = point
+    return rect.left <= x < rect.right and rect.top <= y < rect.bottom
+
+
 def setup_level(level_seed):
     global maze, gums, num_of_gums, ghosts
 
@@ -83,9 +89,9 @@ while True:
         if var.paused:
             if event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = pygame.mouse.get_pos()
-                if resume_rect and resume_rect.collidepoint(mouse_pos):
+                if resume_rect and point_in_rect(resume_rect, mouse_pos):
                     var.paused = False
-                if quit_to_menu_rect and quit_to_menu_rect.collidepoint(mouse_pos):
+                if quit_to_menu_rect and point_in_rect(quit_to_menu_rect, mouse_pos):
                     var.paused = False
                     menu = True
             continue
@@ -100,7 +106,7 @@ while True:
         if menu:
             if event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = pygame.mouse.get_pos()
-                if start_button_rect.collidepoint(mouse_pos):
+                if point_in_rect(start_button_rect, mouse_pos):
                     print("start")
                     start_button_color = (255,0,0)
                     menu = False
@@ -109,13 +115,13 @@ while True:
                     player.lives = parser.lives
                     var.cheat_mode = False
                     setup_level(parser.seed)
-                if high_score_rect.collidepoint(mouse_pos):
+                if point_in_rect(high_score_rect, mouse_pos):
                     display_scoreboard(screen)
                     screen.fill((0, 0, 0))
-                if instructions_rect.collidepoint(mouse_pos):
+                if point_in_rect(instructions_rect, mouse_pos):
                     display_instructions(screen)
                     screen.fill((0, 0, 0))
-                if exit_button_rect.collidepoint(mouse_pos):
+                if point_in_rect(exit_button_rect, mouse_pos):
                     pygame.quit()
                     exit()
  
