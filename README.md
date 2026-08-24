@@ -139,7 +139,7 @@ The project was developed collaboratively by **nalayyou** and **mjabarin**.
 Project management documentation, including planning, task distribution, progress tracking, testing, and technical decisions, is available in:
 
 ```text
-<project-management-directory>
+[project-management/](project-management/README.md)
 ```
 
 The subject requires this documentation to be included in a dedicated project-management directory.
@@ -154,4 +154,3 @@ The subject requires this documentation to be included in a dedicated project-ma
 AI tools were used as a development aid for understanding concepts, debugging, discussing implementations, and improving documentation. All generated suggestions were reviewed, tested, and adapted by the project members.
 
 The 42 subject specifically requires students to understand and critically review AI-generated content.
-
