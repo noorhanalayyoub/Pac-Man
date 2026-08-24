@@ -1,24 +1,42 @@
 import pygame
 import json
 import os
-
-SCORES_FILE = "scores.json"
-MAX_ENTRIES = 10
+from typing import Any, TypedDict
 
 
-def load_scores():
+class ScoreEntry(TypedDict):
+    name: str
+    score: int
+
+
+SCORES_FILE: str = "scores.json"
+MAX_ENTRIES: int = 10
+
+
+def load_scores() -> list[ScoreEntry]:
     if not os.path.exists(SCORES_FILE):
         return []
-    with open(SCORES_FILE, "r") as f:
-        return json.load(f)
+    with open(SCORES_FILE, "r", encoding="utf-8") as file:
+        data: Any = json.load(file)
+    if not isinstance(data, list):
+        return []
+    scores: list[ScoreEntry] = []
+    for entry in data:
+        if not isinstance(entry, dict):
+            continue
+        name = entry.get("name")
+        score = entry.get("score")
+        if isinstance(name, str) and isinstance(score, int):
+            scores.append({"name": name, "score": score})
+    return scores
 
 
-def save_scores(scores):
-    with open(SCORES_FILE, "w") as f:
-        json.dump(scores, f, indent=2)
+def save_scores(scores: list[ScoreEntry]) -> None:
+    with open(SCORES_FILE, "w", encoding="utf-8") as file:
+        json.dump(scores, file, indent=2)
 
 
-def add_score(name, score):
+def add_score(name: str, score: int) -> list[ScoreEntry]:
     scores = load_scores()
     scores.append({"name": name, "score": score})
     scores.sort(key=lambda e: e["score"], reverse=True)
@@ -27,7 +45,7 @@ def add_score(name, score):
     return scores
 
 
-def get_player_name(screen):
+def get_player_name(screen: pygame.Surface) -> str:
     font = pygame.font.SysFont("Corbel", 40)
     small_font = pygame.font.SysFont("Corbel", 30)
     name = ""
@@ -66,7 +84,7 @@ def get_player_name(screen):
     return name.strip()
 
 
-def display_scoreboard(screen):
+def display_scoreboard(screen: pygame.Surface) -> None:
     font_title = pygame.font.SysFont("Corbel", 50)
     font_entry = pygame.font.SysFont("Corbel", 30)
     font_hint = pygame.font.SysFont("Corbel", 25)

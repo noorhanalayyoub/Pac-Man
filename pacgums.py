@@ -1,10 +1,13 @@
 import random 
 import pygame
 import var
+from mazegenerator import MazeGenerator
 
 
 l = [1,1,1,1,1,0]
-def place_gums(surface,maze):
+def place_gums(
+        surface: pygame.Surface,
+        maze: MazeGenerator) -> tuple[list[list[int]], int]:
     total_gums = []
     num_of_gums= 0
     grid = maze.maze
@@ -12,7 +15,7 @@ def place_gums(surface,maze):
     y = 120
     r = 0
     for row in grid :
-        gum_row=[]
+        gum_row: list[int] = []
         x = 60
         r+=1
         c=0
@@ -29,7 +32,11 @@ def place_gums(surface,maze):
         y+=60
     return total_gums,num_of_gums
 
-def draw_gums(surface,maze,gums,removed):
+def draw_gums(
+        surface: pygame.Surface,
+        maze: MazeGenerator,
+        gums: list[list[int]],
+        removed: list[pygame.Rect]) -> list[pygame.Rect]:
     gums_rects=[]
     grid = maze.maze
     x = 60
@@ -48,19 +55,18 @@ def draw_gums(surface,maze,gums,removed):
         y+=60   
     return gums_rects
 
-def remove_gums(surface,x,y):
+def remove_gums(surface: pygame.Surface, x: int, y: int) -> None:
     #if var.removed:
      #gum = var.removed[0]
       #gums_rects.remove(gum)
       pygame.draw.circle(surface,(0,0,0),(x,y),3)
         
-def place_super_pacgums(surface,maze):
+def place_super_pacgums(surface: pygame.Surface, maze: MazeGenerator) -> None:
     grid = maze.maze
     x = 60
     y = 120
     r = 0
     for row in grid :
-        gum_row=[]
         x = 60
         r+=1
         c=0

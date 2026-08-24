@@ -1,8 +1,12 @@
 import pygame
 from mazegenerator import MazeGenerator
 
-def display_maze(maze,surface):
-    lines = []
+
+Line = tuple[tuple[int, int], tuple[int, int]]
+
+
+def display_maze(maze: MazeGenerator, surface: pygame.Surface) -> list[Line]:
+    lines: list[Line] = []
     #maze = MazeGenerator(seed=our_seed,size=(30,14))
     grid = maze.maze
     #pygame.init()
@@ -22,24 +26,16 @@ def display_maze(maze,surface):
                 color = (0, 0, 255)
             if cell & 8: #w
                 pygame.draw.line(main_surface, color, (x,y), (x, y+60))
-                tuple1 = tuple((x,y))
-                tuple2 = tuple ((x, y+60))
-                lines.append(tuple((tuple1, tuple2)))
+                lines.append(((x, y), (x, y + 60)))
             if cell & 1: #n
                 pygame.draw.line(main_surface, color, (x,y), (x+60, y))
-                tuple1 = tuple((x,y))
-                tuple2 = tuple ((x+60, y))
-                lines.append(tuple((tuple1, tuple2)))
+                lines.append(((x, y), (x + 60, y)))
             if width == maze._width -1 :
                 pygame.draw.line(main_surface, color, (x+60,y), (x+60, y+60))
-                tuple1 = tuple((x+60,y))
-                tuple2 = tuple ((x+60, y+60))
-                lines.append(tuple((tuple1, tuple2)))            
+                lines.append(((x + 60, y), (x + 60, y + 60)))
             if height ==maze._height - 1:
                 pygame.draw.line(main_surface, color, (x,y+60), (x+60, y+60)) 
-                tuple1 = tuple((x,y+60))
-                tuple2 = tuple ((x+60, y+60))
-                lines.append(tuple((tuple1, tuple2)))     
+                lines.append(((x, y + 60), (x + 60, y + 60)))
             x += 60
             width += 1
         height += 1

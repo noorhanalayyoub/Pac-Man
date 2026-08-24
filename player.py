@@ -4,36 +4,40 @@ from maze_visualizer import display_maze
 import var
 from pacgums import remove_gums
 import parser
+from ghost import ghost
+from mazegenerator import MazeGenerator
+from typing import Sequence
 
-class Player():
-    def __init__(self,surface):
+class Player:
+    def __init__(self, surface: pygame.Surface) -> None:
         self.last = pygame.time.get_ticks()
         self.cooldown = 100
         self.move_last = pygame.time.get_ticks()
         self.move_cooldown =200
         self.lives = parser.lives
-        self.pos = [930,510] # cell_size(60) * (width /2 +1) - 30  ..... cell_size * (height / 2 +2) -30
+        self.pos: list[float] = [930, 510]
                              # -30 to be in the middle of the cell 
-        self.surface=surface
-        self.score = 0
-        self.rect = None
+        self.surface: pygame.Surface = surface
+        self.score: int = 0
+        self.rect: pygame.Rect | None = None
 
         pacman1= pygame.image.load("images/pacman1.png")
         pacman2= pygame.image.load("images/2.png")
         pacman3= pygame.image.load("images/3.png")
         pacman4= pygame.image.load("images/4.png")
 
-        self.pacman =[pacman1,pacman2,pacman3,pacman4]
-        self.pacman_index = 0
-        self.image = self.pacman[self.pacman_index]
-        self.direction = None 
+        self.pacman: list[pygame.Surface] = [pacman1, pacman2, pacman3, pacman4]
+        self.pacman_index: int = 0
+        self.image: pygame.Surface = self.pacman[self.pacman_index]
+        self.direction: str | None = None
        # self.rect = self.image.get_rect(topleft= (self.pos[0],self.pos[1]))
 
-    def draw(self,surface):
+    def draw(self, surface: pygame.Surface) -> None:
         self.rect = self.image.get_rect(center= (self.pos[0],self.pos[1]))
         surface.blit(self.image,self.rect)
         
-    def check_ghost_collision(self, ghosts):
+    def check_ghost_collision(
+            self, ghosts: Sequence[ghost] | None) -> ghost | None:
         if not ghosts:
             return None
         for g in ghosts:
@@ -45,7 +49,10 @@ class Player():
                 return g
         return None
 
-    def move(self,maze, lines,possible_moves, ghosts=None):
+    def move(
+            self, maze: MazeGenerator, lines: list,
+            possible_moves: dict[str, int],
+            ghosts: Sequence[ghost] | None = None) -> ghost | None:
         now = pygame.time.get_ticks()
         if now - self.move_last < self.move_cooldown:
             return None
@@ -90,7 +97,7 @@ class Player():
                 var.row-=1
         return None
 
-    def animate(self):
+    def animate(self) -> None:
         now = pygame.time.get_ticks() 
         # change image only if cooldown has been 0.1 seconds since last
         if now - self.last >= self.cooldown:
@@ -103,13 +110,13 @@ class Player():
                 self.pacman_index = 0
             self.update_image()
 
-    def rotate(self,goal_direction):
+    def rotate(self, goal_direction: str) -> None:
         if self.direction == goal_direction :
             return
         self.direction = goal_direction
         self.update_image()
 
-    def update_image(self):
+    def update_image(self) -> None:
         rotation =0
         if self.direction == "up":
            rotation = 90
@@ -121,7 +128,7 @@ class Player():
             rotation = 180
         self.image = pygame.transform.rotozoom(self.pacman[self.pacman_index],rotation,2)
 
-    def ate_gum(self,gum_rect):
+    def ate_gum(self, gum_rect: Sequence[pygame.Rect]) -> int:
         for gum in gum_rect:
             #print(gum.x,gum.y)
             if self.pos[0] == gum.x+1 and self.pos[1] == gum.y+1:
@@ -132,7 +139,7 @@ class Player():
             var.num_of_eaten_gums+=1
             self.score += parser.points_per_super_pacgum 
         return self.score
-    def ate_super(self):
+    def ate_super(self) -> bool:
         if self.pos[0] == 90 and self.pos[1] == 150 and not var.super1:
             x=90
             y=150
@@ -162,6 +169,8 @@ class Player():
             remove_gums(self.surface,x=1830,y=930)  
             var.edible = True
             return True
+
+        return False
     
 
         

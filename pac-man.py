@@ -30,21 +30,25 @@ path2 = "scared_1.png"
 ghost_names = ["blinky", "clyde", "twinky", "inky"]
 ghost_starts = [[90, 150], [1830, 150], [90, 930], [1830, 930]]
 
-maze = None
-gums = None
-num_of_gums = 0
-ghosts = []
-resume_rect = None
-quit_to_menu_rect = None
+maze: MazeGenerator
+gums: list[list[int]]
+num_of_gums: int = 0
+ghosts: list[ghost] = []
+resume_rect: pygame.Rect | None = None
+quit_to_menu_rect: pygame.Rect | None = None
+start_button_rect: pygame.Rect | None = None
+high_score_rect: pygame.Rect | None = None
+instructions_rect: pygame.Rect | None = None
+exit_button_rect: pygame.Rect | None = None
 
 
-def point_in_rect(rect, point):
+def point_in_rect(rect: pygame.Rect, point: tuple[int, int]) -> bool:
     """Return whether a point is inside a rectangle."""
     x, y = point
-    return rect.left <= x < rect.right and rect.top <= y < rect.bottom
+    return bool(rect.left <= x < rect.right and rect.top <= y < rect.bottom)
 
 
-def setup_level(level_seed):
+def setup_level(level_seed: int) -> None:
     global maze, gums, num_of_gums, ghosts
 
     maze = MazeGenerator(seed=level_seed, size=(30, 14))
@@ -106,7 +110,8 @@ while True:
         if menu:
             if event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = pygame.mouse.get_pos()
-                if point_in_rect(start_button_rect, mouse_pos):
+                if (start_button_rect is not None
+                        and point_in_rect(start_button_rect, mouse_pos)):
                     start_button_color = (255,0,0)
                     menu = False
                     var.level = 1
@@ -114,13 +119,16 @@ while True:
                     player.lives = parser.lives
                     var.cheat_mode = False
                     setup_level(parser.seed)
-                if point_in_rect(high_score_rect, mouse_pos):
+                if (high_score_rect is not None
+                        and point_in_rect(high_score_rect, mouse_pos)):
                     display_scoreboard(screen)
                     screen.fill((0, 0, 0))
-                if point_in_rect(instructions_rect, mouse_pos):
+                if (instructions_rect is not None
+                        and point_in_rect(instructions_rect, mouse_pos)):
                     display_instructions(screen)
                     screen.fill((0, 0, 0))
-                if point_in_rect(exit_button_rect, mouse_pos):
+                if (exit_button_rect is not None
+                        and point_in_rect(exit_button_rect, mouse_pos)):
                     pygame.quit()
                     exit()
  
@@ -211,7 +219,8 @@ while True:
                 var.col = 6
                 for gg, ss in zip(ghosts, ghost_starts):
                     gg.position = list(ss)
-                    gg.behavior.target_pixel = None
+                    if gg.behavior is not None:
+                        gg.behavior.target_pixel = None
                 died = True
 
             for g, start in zip(ghosts, ghost_starts):
@@ -221,8 +230,9 @@ while True:
                 if was_respawning and not g.respawning:
                     g.position = list(start)
                     g.image = pygame.image.load(path1)
-                    g.behavior = chase(maze, g, player, CELL_SIZE, ORIGIN_X, ORIGIN_Y)
-                    g.behavior.target_pixel = None
+                    behavior = chase(maze, g, player, CELL_SIZE, ORIGIN_X, ORIGIN_Y)
+                    g.behavior = behavior
+                    behavior.target_pixel = None
                     g.draw(screen)
                     continue
 
