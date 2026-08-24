@@ -56,11 +56,11 @@ The configuration file uses JSON and supports comments beginning with `#`. Inval
 
 | Key       | Action     |
 | --------- | ---------- |
-| `W` / `↑` | Move up    |
-| `S` / `↓` | Move down  |
-| `A` / `←` | Move left  |
-| `D` / `→` | Move right |
-| `P`       | Pause      |
+|  `↑` | Move up    |
+|  `↓` | Move down  |
+|  `←` | Move left  |
+|  `→` | Move right |
+| `esc`       | Pause      |
 
 ## Configuration
 
@@ -76,8 +76,6 @@ The configuration file controls game parameters such as:
     "level_max_time": 90
 }
 ```
-
-The exact configuration keys and default values should match the configuration file included in the repository.
 
 ## Highscore
 
@@ -157,7 +155,3 @@ AI tools were used as a development aid for understanding concepts, debugging, d
 
 The 42 subject specifically requires students to understand and critically review AI-generated content.
 
-## Authors
-
-* **nalayyou**
-* **mjabarin**
