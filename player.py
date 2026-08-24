@@ -137,7 +137,6 @@ class Player():
             x=90
             y=150
             var.super1 = 1
-            print("super")
             remove_gums(self.surface,x=90,y=150)
             var.edible = True
             return True
@@ -145,7 +144,6 @@ class Player():
             x=1830
             y=150
             var.super2 = 1
-            print("super")
             remove_gums(self.surface,x=1830,y=150)
             var.edible = True
             return True
@@ -153,7 +151,6 @@ class Player():
             x=90
             y=930
             var.super3 = 1
-            print("super")
             remove_gums(self.surface,x=90,y=930)
             var.edible = True
             return True
@@ -162,7 +159,6 @@ class Player():
             x=1830
             y=930
             var.super4 = 1
-            print("super")
             remove_gums(self.surface,x=1830,y=930)  
             var.edible = True
             return True

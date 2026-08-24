@@ -3,8 +3,7 @@ import pygame
 import var
 
 
-#l = [1,1,1,1,1,0]
-l = [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+l = [1,1,1,1,1,0]
 def place_gums(surface,maze):
     total_gums = []
     num_of_gums= 0
@@ -54,8 +53,6 @@ def remove_gums(surface,x,y):
      #gum = var.removed[0]
       #gums_rects.remove(gum)
       pygame.draw.circle(surface,(0,0,0),(x,y),3)
-      print("removed")
-      
         
 def place_super_pacgums(surface,maze):
     grid = maze.maze

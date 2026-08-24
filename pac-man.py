@@ -107,7 +107,6 @@ while True:
             if event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = pygame.mouse.get_pos()
                 if point_in_rect(start_button_rect, mouse_pos):
-                    print("start")
                     start_button_color = (255,0,0)
                     menu = False
                     var.level = 1
