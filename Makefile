@@ -7,10 +7,10 @@ install:
 	$(PYTHON) -m pip install pygame flake8 mypy $(MAZE_WHEEL)
 
 run:
-	$(PYTHON) menu.py
+	$(PYTHON) pac-man.py config.json
 
 debug:
-	$(PYTHON) -m pdb menu.py
+	$(PYTHON) -m pdb pac-man.py config.json
 
 clean:
 	rm -rf __pycache__ .mypy_cache .pytest_cache

@@ -14,6 +14,7 @@ from instructions import display_instructions
 
 pygame.init()
 screen = pygame.display.set_mode((1920,1080))
+pygame.display.set_caption("pacman")
 start_button_color=(255,255,255)
 menu = True
 
