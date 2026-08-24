@@ -1,6 +1,8 @@
 import pygame
 import json
 import os
+import sys
+import tempfile
 from typing import Any, TypedDict
 
 
@@ -13,12 +15,36 @@ SCORES_FILE: str = "scores.json"
 MAX_ENTRIES: int = 10
 
 
+def _warning(message: str) -> None:
+    """Print a non-fatal score file warning."""
+    print(f"Scoreboard warning: {message}", file=sys.stderr)
+
+
+def _valid_entry(name: Any, score: Any) -> bool:
+    """Return whether raw score data satisfies scoreboard rules."""
+    return (
+        isinstance(name, str)
+        and 1 <= len(name) <= 10
+        and all(character.isalnum() or character == " " for character in name)
+        and isinstance(score, int)
+        and not isinstance(score, bool)
+        and score >= 0
+    )
+
+
 def load_scores() -> list[ScoreEntry]:
     if not os.path.exists(SCORES_FILE):
         return []
-    with open(SCORES_FILE, "r", encoding="utf-8") as file:
-        data: Any = json.load(file)
+    try:
+        with open(SCORES_FILE, "r", encoding="utf-8") as file:
+            data: Any = json.load(file)
+    except FileNotFoundError:
+        return []
+    except (OSError, UnicodeError, json.JSONDecodeError) as error:
+        _warning(f"cannot read '{SCORES_FILE}': {error}")
+        return []
     if not isinstance(data, list):
+        _warning(f"'{SCORES_FILE}' must contain a JSON list")
         return []
     scores: list[ScoreEntry] = []
     for entry in data:
@@ -26,18 +52,41 @@ def load_scores() -> list[ScoreEntry]:
             continue
         name = entry.get("name")
         score = entry.get("score")
-        if isinstance(name, str) and isinstance(score, int):
+        if _valid_entry(name, score):
+            assert isinstance(name, str)
+            assert isinstance(score, int)
             scores.append({"name": name, "score": score})
-    return scores
+    scores.sort(key=lambda entry: entry["score"], reverse=True)
+    return scores[:MAX_ENTRIES]
 
 
-def save_scores(scores: list[ScoreEntry]) -> None:
-    with open(SCORES_FILE, "w", encoding="utf-8") as file:
-        json.dump(scores, file, indent=2)
+def save_scores(scores: list[ScoreEntry]) -> bool:
+    """Atomically save scores and report filesystem failures."""
+    temporary_path: str | None = None
+    directory = os.path.dirname(os.path.abspath(SCORES_FILE))
+    try:
+        descriptor, temporary_path = tempfile.mkstemp(
+            prefix=".scores-", dir=directory, text=True
+        )
+        with os.fdopen(descriptor, "w", encoding="utf-8") as file:
+            json.dump(scores[:MAX_ENTRIES], file, indent=2)
+        os.replace(temporary_path, SCORES_FILE)
+    except (OSError, TypeError, ValueError) as error:
+        if temporary_path is not None:
+            try:
+                os.unlink(temporary_path)
+            except OSError:
+                pass
+        _warning(f"cannot save '{SCORES_FILE}': {error}")
+        return False
+    return True
 
 
 def add_score(name: str, score: int) -> list[ScoreEntry]:
     scores = load_scores()
+    if not _valid_entry(name, score):
+        _warning("rejected invalid score entry")
+        return scores
     scores.append({"name": name, "score": score})
     scores.sort(key=lambda e: e["score"], reverse=True)
     scores = scores[:MAX_ENTRIES]
@@ -55,14 +104,17 @@ def get_player_name(screen: pygame.Surface) -> str:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
-                exit()
+                sys.exit(0)
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN and name.strip():
                     active = False
                 elif event.key == pygame.K_BACKSPACE:
                     name = name[:-1]
                 else:
-                    if len(name) < 20 and event.unicode.isprintable():
+                    if (
+                        len(name) < 10
+                        and (event.unicode.isalnum() or event.unicode == " ")
+                    ):
                         name += event.unicode
 
         screen.fill((0, 0, 0))
@@ -98,7 +150,7 @@ def display_scoreboard(screen: pygame.Surface) -> None:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
-                exit()
+                sys.exit(0)
             if event.type in (pygame.KEYDOWN, pygame.MOUSEBUTTONDOWN):
                 waiting = False
 
