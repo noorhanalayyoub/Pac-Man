@@ -24,7 +24,13 @@ def handle_unexpected_error(
     error: BaseException,
     traceback: TracebackType | None,
 ) -> None:
-    """Report an uncaught application error without a traceback."""
+    """Report an uncaught application error without a traceback.
+
+    Args:
+        error_type: The exception class.
+        error: The exception instance.
+        traceback: The traceback object (ignored).
+    """
     del error_type, traceback
     pygame.quit()
     print(f"Error: {error}", file=sys.stderr)
@@ -34,7 +40,17 @@ sys.excepthook = handle_unexpected_error
 
 
 def load_image(path: str) -> pygame.Surface:
-    """Load an image or terminate with a clear error message."""
+    """Load an image or terminate with a clear error message.
+
+    Args:
+        path: Path to the image file.
+
+    Returns:
+        The loaded pygame Surface.
+
+    Raises:
+        SystemExit: If the image cannot be loaded.
+    """
     try:
         return pygame.image.load(path)
     except (OSError, pygame.error) as error:
@@ -47,7 +63,14 @@ def load_image(path: str) -> pygame.Surface:
 
 
 def validate_maze(generated_maze: MazeGenerator) -> None:
-    """Reject malformed or unsolvable mazes before gameplay starts."""
+    """Reject malformed or unsolvable mazes before gameplay starts.
+
+    Args:
+        generated_maze: The maze generator instance to validate.
+
+    Raises:
+        ValueError: If dimensions, cells, or path are invalid.
+    """
     grid = generated_maze.maze
     if len(grid) != 14 or any(len(row) != 30 for row in grid):
         raise ValueError("generated maze has invalid dimensions")
@@ -110,12 +133,25 @@ class LevelSetupError(Exception):
 
 
 def point_in_rect(rect: pygame.Rect, point: tuple[int, int]) -> bool:
-    """Return whether a point is inside a rectangle."""
+    """Return whether a point is inside a rectangle.
+
+    Args:
+        rect: The rectangle to test.
+        point: The (x, y) point to check.
+
+    Returns:
+        True if the point is inside the rect, False otherwise.
+    """
     x, y = point
     return bool(rect.left <= x < rect.right and rect.top <= y < rect.bottom)
 
 
 def setup_level() -> None:
+    """Generate maze, place gums and ghosts for the current level.
+
+    Raises:
+        LevelSetupError: If level preparation fails.
+    """
     try:
         if var.level == 1:
             new_maze = MazeGenerator(seed=parser.seed, size=(30, 14))
@@ -162,7 +198,11 @@ def setup_level() -> None:
 
 
 def try_setup_level() -> bool:
-    """Prepare a level and report setup failures without a traceback."""
+    """Prepare a level and report setup failures without a traceback.
+
+    Returns:
+        True if level setup succeeded, False otherwise.
+    """
     try:
         setup_level()
     except LevelSetupError as error:
@@ -172,7 +212,11 @@ def try_setup_level() -> bool:
 
 
 def complete_game(message: str) -> None:
-    """Display the result and safely process the final score."""
+    """Display the result and safely process the final score.
+
+    Args:
+        message: Result message to display (e.g., "Game Over", "You Win").
+    """
     try:
         screen.fill((0, 0, 0))
         font = pygame.font.SysFont("Corbel", 60)

@@ -3,6 +3,11 @@ import sys
 
 
 def display_instructions(screen: pygame.Surface) -> None:
+    """Display the instructions screen until a key or mouse button is pressed.
+
+    Args:
+        screen: The pygame surface to render on.
+    """
     font_title = pygame.font.SysFont("Corbel", 50)
     font_text = pygame.font.SysFont("Corbel", 30)
     font_hint = pygame.font.SysFont("Corbel", 25)

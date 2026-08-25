@@ -7,6 +7,8 @@ from typing import Any, TypedDict
 
 
 class ScoreEntry(TypedDict):
+    """A single highscore entry with a name and score."""
+
     name: str
     score: int
 
@@ -16,12 +18,24 @@ MAX_ENTRIES: int = 10
 
 
 def _warning(message: str) -> None:
-    """Print a non-fatal score file warning."""
+    """Print a non-fatal score file warning.
+
+    Args:
+        message: Warning description to print.
+    """
     print(f"Scoreboard warning: {message}", file=sys.stderr)
 
 
 def _valid_entry(name: Any, score: Any) -> bool:
-    """Return whether raw score data satisfies scoreboard rules."""
+    """Return whether raw score data satisfies scoreboard rules.
+
+    Args:
+        name: Candidate player name.
+        score: Candidate score value.
+
+    Returns:
+        True if the entry is valid (1-10 alphanumeric chars, non-negative int).
+    """
     return (
         isinstance(name, str)
         and 1 <= len(name) <= 10
@@ -33,6 +47,11 @@ def _valid_entry(name: Any, score: Any) -> bool:
 
 
 def load_scores() -> list[ScoreEntry]:
+    """Load and validate scores from disk.
+
+    Returns:
+        Sorted list of top ScoreEntry dicts, or empty list on error.
+    """
     if not os.path.exists(SCORES_FILE):
         return []
     try:
@@ -61,7 +80,14 @@ def load_scores() -> list[ScoreEntry]:
 
 
 def save_scores(scores: list[ScoreEntry]) -> bool:
-    """Atomically save scores and report filesystem failures."""
+    """Atomically save scores to disk.
+
+    Args:
+        scores: List of ScoreEntry dicts to persist.
+
+    Returns:
+        True if save succeeded, False on filesystem error.
+    """
     temporary_path: str | None = None
     directory = os.path.dirname(os.path.abspath(SCORES_FILE))
     try:
@@ -83,6 +109,15 @@ def save_scores(scores: list[ScoreEntry]) -> bool:
 
 
 def add_score(name: str, score: int) -> list[ScoreEntry]:
+    """Add a score entry, keep top 10, and persist to disk.
+
+    Args:
+        name: Player name (1-10 alphanumeric chars or spaces).
+        score: Non-negative integer score.
+
+    Returns:
+        Updated sorted list of top scores.
+    """
     scores = load_scores()
     if not _valid_entry(name, score):
         _warning("rejected invalid score entry")
@@ -95,6 +130,14 @@ def add_score(name: str, score: int) -> list[ScoreEntry]:
 
 
 def get_player_name(screen: pygame.Surface) -> str:
+    """Display a name entry screen and return the validated name.
+
+    Args:
+        screen: The pygame surface to render on.
+
+    Returns:
+        The entered player name stripped of whitespace.
+    """
     font = pygame.font.SysFont("Corbel", 40)
     small_font = pygame.font.SysFont("Corbel", 30)
     name = ""
@@ -139,6 +182,11 @@ def get_player_name(screen: pygame.Surface) -> str:
 
 
 def display_scoreboard(screen: pygame.Surface) -> None:
+    """Display the top 10 highscores until a key or mouse button is pressed.
+
+    Args:
+        screen: The pygame surface to render on.
+    """
     font_title = pygame.font.SysFont("Corbel", 50)
     font_entry = pygame.font.SysFont("Corbel", 30)
     font_hint = pygame.font.SysFont("Corbel", 25)

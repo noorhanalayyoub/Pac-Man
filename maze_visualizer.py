@@ -6,6 +6,15 @@ Line = tuple[tuple[int, int], tuple[int, int]]
 
 
 def display_maze(maze: MazeGenerator, surface: pygame.Surface) -> list[Line]:
+    """Render maze walls onto the surface.
+
+    Args:
+        maze: The maze generator instance.
+        surface: The pygame surface to draw on.
+
+    Returns:
+        List of wall line segments as ((x1,y1), (x2,y2)) tuples.
+    """
     lines: list[Line] = []
     # maze = MazeGenerator(seed=our_seed,size=(30,14))
     grid = maze.maze

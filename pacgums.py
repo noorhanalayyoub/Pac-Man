@@ -10,6 +10,15 @@ GUM_CHANCE = [1, 1, 1, 1, 1, 0]
 def place_gums(
     surface: pygame.Surface, maze: MazeGenerator
 ) -> tuple[list[list[int]], int]:
+    """Randomly place pacgums in maze corridors.
+
+    Args:
+        surface: The pygame surface (unused, kept for API consistency).
+        maze: The maze generator instance.
+
+    Returns:
+        Tuple of (2D gum grid, total gum count).
+    """
     total_gums = []
     num_of_gums = 0
     grid = maze.maze
@@ -47,6 +56,17 @@ def draw_gums(
     gums: list[list[int]],
     removed: list[pygame.Rect],
 ) -> list[pygame.Rect]:
+    """Render pacgums on the surface and return their rects for collision.
+
+    Args:
+        surface: The pygame surface to draw on.
+        maze: The maze generator instance.
+        gums: 2D grid indicating gum placement.
+        removed: List of already-eaten gum rects to skip.
+
+    Returns:
+        List of pacgum rects for collision detection.
+    """
     gums_rects = []
     grid = maze.maze
     x = 60
@@ -71,6 +91,13 @@ def draw_gums(
 
 
 def remove_gums(surface: pygame.Surface, x: int, y: int) -> None:
+    """Erase a super-pacgum visually by drawing a black circle over it.
+
+    Args:
+        surface: The pygame surface to draw on.
+        x: X pixel coordinate of the super-pacgum.
+        y: Y pixel coordinate of the super-pacgum.
+    """
     # if var.removed:
     # gum = var.removed[0]
     # gums_rects.remove(gum)
@@ -78,6 +105,12 @@ def remove_gums(surface: pygame.Surface, x: int, y: int) -> None:
 
 
 def place_super_pacgums(surface: pygame.Surface, maze: MazeGenerator) -> None:
+    """Draw four super-pacgums in the maze corners if not yet eaten.
+
+    Args:
+        surface: The pygame surface to draw on.
+        maze: The maze generator instance.
+    """
     grid = maze.maze
     x = 60
     y = 120
