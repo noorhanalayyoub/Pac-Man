@@ -25,12 +25,23 @@ level_max_time: int = DEFAULTS["level_max_time"]
 
 
 def warning(message: str) -> None:
-    """Print a non-fatal configuration warning."""
+    """Print a non-fatal configuration warning.
+
+    Args:
+        message: Warning description to print.
+    """
     print(f"Configuration warning: {message}", file=sys.stderr)
 
 
 def strip_comments(content: str) -> str:
-    """Remove hash comments while preserving hashes inside JSON strings."""
+    """Remove hash comments while preserving hashes inside JSON strings.
+
+    Args:
+        content: Raw JSON string that may contain # comments.
+
+    Returns:
+        Cleaned JSON string with comments removed.
+    """
     result: list[str] = []
     in_string = False
     escaped = False
@@ -60,7 +71,14 @@ def strip_comments(content: str) -> str:
 
 
 def object_pairs(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
-    """Build an object and warn when a key is repeated."""
+    """Build an object and warn when a key is repeated.
+
+    Args:
+        pairs: List of (key, value) tuples from JSON parsing.
+
+    Returns:
+        Dict of the last value for each key.
+    """
     result: dict[str, Any] = {}
     for key, value in pairs:
         if key in result:
@@ -72,7 +90,17 @@ def object_pairs(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
 
 
 def read_json(path: str) -> dict[str, Any]:
-    """Read a JSON object while allowing full-line comments."""
+    """Read a JSON object while allowing full-line comments.
+
+    Args:
+        path: Path to the JSON configuration file.
+
+    Returns:
+        Parsed configuration dict.
+
+    Raises:
+        ConfigError: On file not found, invalid JSON, or non-object root.
+    """
     try:
         with open(path, "r", encoding="utf-8") as config_file:
             content = strip_comments(config_file.read())
@@ -98,7 +126,15 @@ def read_json(path: str) -> dict[str, Any]:
 
 
 def integer_value(data: dict[str, Any], key: str) -> int:
-    """Return a validated integer configuration value."""
+    """Return a validated integer configuration value.
+
+    Args:
+        data: Parsed configuration dict.
+        key: Configuration key to validate.
+
+    Returns:
+        Validated integer value, or the default if invalid/missing.
+    """
     default = DEFAULTS[key]
     value = data.get(key, default)
     if key not in data:
@@ -116,7 +152,14 @@ def integer_value(data: dict[str, Any], key: str) -> int:
 
 
 def load_config(path: str) -> None:
-    """Load and validate configuration values into this module."""
+    """Load and validate configuration values into this module.
+
+    Args:
+        path: Path to the JSON configuration file.
+
+    Raises:
+        ConfigError: On file or parsing errors.
+    """
     global lives, points_per_pacgum, points_per_super_pacgum
     global points_per_ghost, seed, level_max_time
 
@@ -130,7 +173,14 @@ def load_config(path: str) -> None:
 
 
 def load_from_args(arguments: Sequence[str]) -> None:
-    """Load configuration from the required single command-line argument."""
+    """Load configuration from the required single command-line argument.
+
+    Args:
+        arguments: Command-line arguments (sys.argv).
+
+    Raises:
+        ConfigError: If not exactly one config file argument is provided.
+    """
     if len(arguments) != 2:
         raise ConfigError("usage: python3 pac-man.py config.json")
     load_config(arguments[1])

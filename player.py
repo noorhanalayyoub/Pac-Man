@@ -8,6 +8,14 @@ from typing import Sequence
 
 
 class Player:
+    """Player entity controlled by the user.
+
+    Attributes:
+        lives: Remaining lives.
+        pos: Current pixel position [x, y].
+        score: Current score.
+    """
+
     def __init__(self, surface: pygame.Surface) -> None:
         self.last = pygame.time.get_ticks()
         self.cooldown = 100
@@ -38,12 +46,25 @@ class Player:
     # self.rect = self.image.get_rect(topleft= (self.pos[0],self.pos[1]))
 
     def draw(self, surface: pygame.Surface) -> None:
+        """Draw the player sprite onto the surface.
+
+        Args:
+            surface: The pygame surface to draw on.
+        """
         self.rect = self.image.get_rect(center=(self.pos[0], self.pos[1]))
         surface.blit(self.image, self.rect)
 
     def check_ghost_collision(
         self, ghosts: Sequence[ghost] | None
     ) -> ghost | None:
+        """Check for collision with non-edible, non-respawning ghosts.
+
+        Args:
+            ghosts: List of ghost entities to check against.
+
+        Returns:
+            The first colliding ghost, or None if no collision.
+        """
         if not ghosts:
             return None
         for g in ghosts:
@@ -62,6 +83,17 @@ class Player:
         possible_moves: dict[str, int],
         ghosts: Sequence[ghost] | None = None,
     ) -> ghost | None:
+        """Move the player one cell in the pressed direction if valid.
+
+        Args:
+            maze: The current maze generator instance.
+            lines: Wall line segments for collision.
+            possible_moves: Dict of passable directions (n/s/e/w).
+            ghosts: Optional list of ghost entities.
+
+        Returns:
+            A ghost if collision occurred during movement, else None.
+        """
         now = pygame.time.get_ticks()
         if now - self.move_last < self.move_cooldown:
             return None
@@ -107,6 +139,7 @@ class Player:
         return None
 
     def animate(self) -> None:
+        """Cycle through animation frames on a cooldown."""
         now = pygame.time.get_ticks()
         # change image only if cooldown has been 0.1 seconds since last
         if now - self.last >= self.cooldown:
@@ -119,12 +152,18 @@ class Player:
             self.update_image()
 
     def rotate(self, goal_direction: str) -> None:
+        """Rotate the sprite to face the given direction if changed.
+
+        Args:
+            goal_direction: Target direction (up, down, left, right).
+        """
         if self.direction == goal_direction:
             return
         self.direction = goal_direction
         self.update_image()
 
     def update_image(self) -> None:
+        """Update the displayed sprite based on direction and frame."""
         rotation = 0
         if self.direction == "up":
             rotation = 90
@@ -139,6 +178,14 @@ class Player:
         )
 
     def ate_gum(self, gum_rect: Sequence[pygame.Rect]) -> int:
+        """Check for pacgum collisions, award points, and return score.
+
+        Args:
+            gum_rect: List of pacgum rects to check against.
+
+        Returns:
+            Updated score after eating.
+        """
         for gum in gum_rect:
             # print(gum.x,gum.y)
             if self.pos[0] == gum.x + 1 and self.pos[1] == gum.y + 1:
@@ -151,6 +198,11 @@ class Player:
         return self.score
 
     def ate_super(self) -> bool:
+        """Check if the player ate a super-pacgum in any corner.
+
+        Returns:
+            True if a super-pacgum was eaten, False otherwise.
+        """
         if self.pos[0] == 90 and self.pos[1] == 150 and not var.super1:
             var.super1 = 1
             remove_gums(self.surface, x=90, y=150)
