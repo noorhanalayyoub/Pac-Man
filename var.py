@@ -1,4 +1,5 @@
 import pygame
+from typing import Any
 
 
 row: int = 14
@@ -18,3 +19,8 @@ MAX_LEVELS: int = 10
 paused: bool = False
 pause_time: int = 0
 cheat_mode: bool = False
+
+maze: Any = None
+gums: list[list[int]] = []
+num_of_gums: int = 0
+ghosts: list[Any] = []

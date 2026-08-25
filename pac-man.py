@@ -1,6 +1,5 @@
 import sys
 from types import TracebackType
-import random
 
 
 try:
@@ -98,10 +97,6 @@ path2 = "scared_1.png"
 ghost_names = ["blinky", "clyde", "twinky", "inky"]
 ghost_starts = [[90, 150], [1830, 150], [90, 930], [1830, 930]]
 
-maze: MazeGenerator
-gums: list[list[int]]
-num_of_gums: int = 0
-ghosts: list[ghost] = []
 resume_rect: pygame.Rect | None = None
 quit_to_menu_rect: pygame.Rect | None = None
 start_button_rect: pygame.Rect | None = None
@@ -121,11 +116,9 @@ def point_in_rect(rect: pygame.Rect, point: tuple[int, int]) -> bool:
 
 
 def setup_level() -> None:
-    global maze, gums, num_of_gums, ghosts
-
     try:
-        if var.level ==1:
-            new_maze = MazeGenerator(seed=parser.seed,size=(30,14))
+        if var.level == 1:
+            new_maze = MazeGenerator(seed=parser.seed, size=(30, 14))
         else:
             new_maze = MazeGenerator(size=(30, 14))
         validate_maze(new_maze)
@@ -147,10 +140,10 @@ def setup_level() -> None:
     except Exception as error:
         raise LevelSetupError(f"unable to prepare level: {error}") from error
 
-    maze = new_maze
-    gums = new_gums
-    num_of_gums = new_num_of_gums
-    ghosts = new_ghosts
+    var.maze = new_maze
+    var.gums = new_gums
+    var.num_of_gums = new_num_of_gums
+    var.ghosts = new_ghosts
 
     var.removed = []
     var.num_of_eaten_gums = 0
@@ -309,15 +302,17 @@ while True:
     else:
         if not var.paused:
             possible_moves = collision.get_possible_moves(
-                maze.maze[var.col][var.row]
+                var.maze.maze[var.col][var.row]
             )
         screen.fill((0, 0, 0))
-        lines = display_maze(maze, screen)
-        gum_rects = draw_gums(screen, maze, gums, var.removed)
-        place_super_pacgums(screen, maze)
+        lines = display_maze(var.maze, screen)
+        gum_rects = draw_gums(screen, var.maze, var.gums, var.removed)
+        place_super_pacgums(screen, var.maze)
         player.draw(screen)
         if not var.paused:
-            collided_ghost = player.move(maze, lines, possible_moves, ghosts)
+            collided_ghost = player.move(
+                var.maze, lines, possible_moves, var.ghosts
+            )
             score = player.ate_gum(gum_rects)
             player.animate()
         else:
@@ -362,7 +357,7 @@ while True:
         if not var.paused:
             died = False
             if not collided_ghost:
-                for g in ghosts:
+                for g in var.ghosts:
                     if not g.respawning and not g.edible:
                         dx = player.pos[0] - g.position[0]
                         dy = player.pos[1] - g.position[1]
@@ -375,13 +370,13 @@ while True:
                 player.pos = [930, 510]
                 var.row = 14
                 var.col = 6
-                for gg, ss in zip(ghosts, ghost_starts):
+                for gg, ss in zip(var.ghosts, ghost_starts):
                     gg.position = list(ss)
                     if gg.behavior is not None:
                         gg.behavior.target_pixel = None
                 died = True
 
-            for g, start in zip(ghosts, ghost_starts):
+            for g, start in zip(var.ghosts, ghost_starts):
                 was_respawning = g.respawning
                 g.update()
 
@@ -389,7 +384,7 @@ while True:
                     g.position = list(start)
                     g.image = load_image(path1)
                     behavior = chase(
-                        maze, g, player, CELL_SIZE, ORIGIN_X, ORIGIN_Y
+                        var.maze, g, player, CELL_SIZE, ORIGIN_X, ORIGIN_Y
                     )
                     g.behavior = behavior
                     behavior.target_pixel = None
@@ -403,13 +398,13 @@ while True:
                     g.image = load_image(path2)
                     g.make_edible()
                     g.behavior = frightened(
-                        maze, g, player, CELL_SIZE, ORIGIN_X, ORIGIN_Y
+                        var.maze, g, player, CELL_SIZE, ORIGIN_X, ORIGIN_Y
                     )
                 if not var.edible and g.edible:
                     g.image = load_image(path1)
                     g.edible = False
                     g.behavior = chase(
-                        maze, g, player, CELL_SIZE, ORIGIN_X, ORIGIN_Y
+                        var.maze, g, player, CELL_SIZE, ORIGIN_X, ORIGIN_Y
                     )
 
                 if not died:
@@ -431,7 +426,7 @@ while True:
                     continue
 
             if (
-                num_of_gums + 4 == var.num_of_eaten_gums
+                var.num_of_gums + 4 == var.num_of_eaten_gums
                 and not var.level_complete
             ):
                 var.level_complete = True
@@ -447,7 +442,7 @@ while True:
                     pygame.display.update()
                     pygame.time.wait(3000)
                     var.level += 1
-                    if not try_setup_level(random.randint(1, 1000)):
+                    if not try_setup_level():
                         menu = True
                 else:
                     complete_game("You Win the Game!")
@@ -458,7 +453,7 @@ while True:
                 menu = True
                 continue
         else:
-            for g in ghosts:
+            for g in var.ghosts:
                 g.draw(screen)
 
             overlay = pygame.Surface((1920, 1080), pygame.SRCALPHA)
