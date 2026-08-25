@@ -1,0 +1,42 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pac-man-game"
+version = "1.0.0"
+description = "A Pygame Pac-Man game"
+requires-python = ">=3.10"
+dependencies = ["pygame"]
+
+[tool.setuptools]
+py-modules = [
+    "collision",
+    "ghost",
+    "instructions",
+    "maze_visualizer",
+    "pacgums",
+    "pac-man",
+    "parser",
+    "player",
+    "scoreboard",
+    "var",
+]
+
+[tool.setuptools.data-files]
+"." = [
+    "config.json",
+    "scores.json",
+    "Makefile",
+    "*.png",
+    "images/*",
+    "mazegenerator-2.1.0-py3-none-any.whl",
+]
+
+[tool.mypy]
+exclude = ["^mazegenerator-2\\.1\\.0-py3-none-any/"]
+
+[[tool.mypy.overrides]]
+module = ["mazegenerator", "mazegenerator.*"]
+follow_imports = "skip"
+ignore_missing_imports = true

@@ -2,7 +2,7 @@ import pygame
 import sys
 
 
-def display_instructions(screen):
+def display_instructions(screen: pygame.Surface) -> None:
     font_title = pygame.font.SysFont("Corbel", 50)
     font_text = pygame.font.SysFont("Corbel", 30)
     font_hint = pygame.font.SysFont("Corbel", 25)
@@ -51,7 +51,9 @@ def display_instructions(screen):
             screen.blit(surf, (960 - surf.get_width() // 2, y))
             y += 45
 
-        hint = font_hint.render("Press any key to return", True, (150, 150, 150))
+        hint = font_hint.render(
+            "Press any key to return", True, (150, 150, 150)
+        )
         screen.blit(hint, (960 - hint.get_width() // 2, 700))
 
         pygame.display.update()
