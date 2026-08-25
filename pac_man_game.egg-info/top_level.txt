@@ -1,9 +1,0 @@
-collision
-ghost
-instructions
-maze_visualizer
-pacgums
-parser
-player
-scoreboard
-var
