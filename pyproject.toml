@@ -16,7 +16,6 @@ py-modules = [
     "instructions",
     "maze_visualizer",
     "pacgums",
-    "pac-man",
     "parser",
     "player",
     "scoreboard",
@@ -28,7 +27,6 @@ py-modules = [
     "config.json",
     "scores.json",
     "Makefile",
-    "*.png",
     "images/*",
     "mazegenerator-2.1.0-py3-none-any.whl",
 ]

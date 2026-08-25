@@ -114,9 +114,9 @@ except (OSError, pygame.error) as error:
 CELL_SIZE = 60
 ORIGIN_X = 60
 ORIGIN_Y = 120
-path1 = "right2.png"
-path2 = "scared_1.png"
+path1 = "images/right2.png"
 
+path2 = "images/scared_1.png"
 ghost_names = ["blinky", "clyde", "twinky", "inky"]
 ghost_starts = [[90, 150], [1830, 150], [90, 930], [1830, 930]]
 

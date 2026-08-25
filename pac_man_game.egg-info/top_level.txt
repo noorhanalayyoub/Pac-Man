@@ -2,7 +2,6 @@ collision
 ghost
 instructions
 maze_visualizer
-pac-man
 pacgums
 parser
 player
