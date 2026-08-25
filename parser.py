@@ -29,15 +29,54 @@ def _warning(message: str) -> None:
     print(f"Configuration warning: {message}", file=sys.stderr)
 
 
+def _strip_comments(content: str) -> str:
+    """Remove hash comments while preserving hashes inside JSON strings."""
+    result: list[str] = []
+    in_string = False
+    escaped = False
+    skipping_comment = False
+    for character in content:
+        if skipping_comment:
+            if character == "\n":
+                skipping_comment = False
+                result.append(character)
+            continue
+        if in_string:
+            result.append(character)
+            if escaped:
+                escaped = False
+            elif character == "\\":
+                escaped = True
+            elif character == '"':
+                in_string = False
+        elif character == '"':
+            in_string = True
+            result.append(character)
+        elif character == "#":
+            skipping_comment = True
+        else:
+            result.append(character)
+    return "".join(result)
+
+
+def _object_pairs(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
+    """Build an object and warn when a key is repeated."""
+    result: dict[str, Any] = {}
+    for key, value in pairs:
+        if key in result:
+            _warning(
+                f"duplicate key '{key}'; the last value will be used"
+            )
+        result[key] = value
+    return result
+
+
 def _read_json(path: str) -> dict[str, Any]:
     """Read a JSON object while allowing full-line comments."""
     try:
         with open(path, "r", encoding="utf-8") as config_file:
-            content = "\n".join(
-                line for line in config_file
-                if not line.lstrip().startswith("#")
-            )
-        data: Any = json.loads(content)
+            content = _strip_comments(config_file.read())
+        data: Any = json.loads(content, object_pairs_hook=_object_pairs)
     except FileNotFoundError as error:
         raise ConfigError(f"configuration file not found: {path}") from error
     except IsADirectoryError as error:

@@ -1,7 +1,8 @@
-{
-	"lives" : 10,
-	"points_per_pacgum" : 1,
-	"points_per_super_pacgum" : 4,
+{	"lives": 3,
+	"lives": 4,
+	#"points_per_pacgum" : 1,
+	#jhkjdhgj
+	"points_per_super_pacgum" : 4, #meow
 	"points_per_ghost": 10,
 	"seed" : 42,
 	"level_max_time" : 90000

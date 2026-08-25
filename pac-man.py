@@ -120,11 +120,14 @@ def point_in_rect(rect: pygame.Rect, point: tuple[int, int]) -> bool:
     return bool(rect.left <= x < rect.right and rect.top <= y < rect.bottom)
 
 
-def setup_level(level_seed: int) -> None:
+def setup_level() -> None:
     global maze, gums, num_of_gums, ghosts
 
     try:
-        new_maze = MazeGenerator(seed=level_seed, size=(30, 14))
+        if var.level ==1:
+            new_maze = MazeGenerator(seed=parser.seed,size=(30,14))
+        else:
+            new_maze = MazeGenerator(size=(30, 14))
         validate_maze(new_maze)
         new_gums, new_num_of_gums = place_gums(screen, new_maze)
         new_ghosts: list[ghost] = []
@@ -165,10 +168,10 @@ def setup_level(level_seed: int) -> None:
     var.timer_start = pygame.time.get_ticks()
 
 
-def try_setup_level(level_seed: int) -> bool:
+def try_setup_level() -> bool:
     """Prepare a level and report setup failures without a traceback."""
     try:
-        setup_level(level_seed)
+        setup_level()
     except LevelSetupError as error:
         print(f"Error: {error}", file=sys.stderr)
         return False
@@ -238,7 +241,7 @@ while True:
                 and var.level < var.MAX_LEVELS
             ):
                 var.level += 1
-                if not try_setup_level(random.randint(1, 1000)):
+                if not try_setup_level():
                     menu = True
 
         if menu:
@@ -253,7 +256,7 @@ while True:
                     player.score = 0
                     player.lives = parser.lives
                     var.cheat_mode = False
-                    if not try_setup_level(parser.seed):
+                    if not try_setup_level():
                         menu = True
                 if high_score_rect is not None and point_in_rect(
                     high_score_rect, mouse_pos
