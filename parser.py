@@ -24,20 +24,59 @@ seed: int = DEFAULTS["seed"]
 level_max_time: int = DEFAULTS["level_max_time"]
 
 
-def _warning(message: str) -> None:
+def warning(message: str) -> None:
     """Print a non-fatal configuration warning."""
     print(f"Configuration warning: {message}", file=sys.stderr)
 
 
-def _read_json(path: str) -> dict[str, Any]:
+def strip_comments(content: str) -> str:
+    """Remove hash comments while preserving hashes inside JSON strings."""
+    result: list[str] = []
+    in_string = False
+    escaped = False
+    skipping_comment = False
+    for character in content:
+        if skipping_comment:
+            if character == "\n":
+                skipping_comment = False
+                result.append(character)
+            continue
+        if in_string:
+            result.append(character)
+            if escaped:
+                escaped = False
+            elif character == "\\":
+                escaped = True
+            elif character == '"':
+                in_string = False
+        elif character == '"':
+            in_string = True
+            result.append(character)
+        elif character == "#":
+            skipping_comment = True
+        else:
+            result.append(character)
+    return "".join(result)
+
+
+def object_pairs(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
+    """Build an object and warn when a key is repeated."""
+    result: dict[str, Any] = {}
+    for key, value in pairs:
+        if key in result:
+            warning(
+                f"duplicate key '{key}'; the last value will be used"
+            )
+        result[key] = value
+    return result
+
+
+def read_json(path: str) -> dict[str, Any]:
     """Read a JSON object while allowing full-line comments."""
     try:
         with open(path, "r", encoding="utf-8") as config_file:
-            content = "\n".join(
-                line for line in config_file
-                if not line.lstrip().startswith("#")
-            )
-        data: Any = json.loads(content)
+            content = strip_comments(config_file.read())
+        data: Any = json.loads(content, object_pairs_hook=object_pairs)
     except FileNotFoundError as error:
         raise ConfigError(f"configuration file not found: {path}") from error
     except IsADirectoryError as error:
@@ -58,20 +97,20 @@ def _read_json(path: str) -> dict[str, Any]:
     return data
 
 
-def _integer_value(data: dict[str, Any], key: str) -> int:
+def integer_value(data: dict[str, Any], key: str) -> int:
     """Return a validated integer configuration value."""
     default = DEFAULTS[key]
     value = data.get(key, default)
     if key not in data:
-        _warning(f"missing '{key}', using {default}")
+        warning(f"missing '{key}', using {default}")
     if isinstance(value, bool) or not isinstance(value, int):
-        _warning(f"invalid '{key}', using {default}")
+        warning(f"invalid '{key}', using {default}")
         return default
     minimum = 1000 if key == "level_max_time" else 0
     if key == "lives":
         minimum = 1
     if value < minimum:
-        _warning(f"'{key}' is too small, using {default}")
+        warning(f"'{key}' is too small, using {default}")
         return default
     return int(value)
 
@@ -81,13 +120,13 @@ def load_config(path: str) -> None:
     global lives, points_per_pacgum, points_per_super_pacgum
     global points_per_ghost, seed, level_max_time
 
-    data = _read_json(path)
-    lives = _integer_value(data, "lives")
-    points_per_pacgum = _integer_value(data, "points_per_pacgum")
-    points_per_super_pacgum = _integer_value(data, "points_per_super_pacgum")
-    points_per_ghost = _integer_value(data, "points_per_ghost")
-    seed = _integer_value(data, "seed")
-    level_max_time = _integer_value(data, "level_max_time")
+    data = read_json(path)
+    lives = integer_value(data, "lives")
+    points_per_pacgum = integer_value(data, "points_per_pacgum")
+    points_per_super_pacgum = integer_value(data, "points_per_super_pacgum")
+    points_per_ghost = integer_value(data, "points_per_ghost")
+    seed = integer_value(data, "seed")
+    level_max_time = integer_value(data, "level_max_time")
 
 
 def load_from_args(arguments: Sequence[str]) -> None:
