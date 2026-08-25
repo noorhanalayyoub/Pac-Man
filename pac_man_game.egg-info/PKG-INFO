@@ -1,6 +1,0 @@
-Metadata-Version: 2.4
-Name: pac-man-game
-Version: 1.0.0
-Summary: A Pygame Pac-Man game
-Requires-Python: >=3.10
-Requires-Dist: pygame
