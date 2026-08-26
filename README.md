@@ -44,6 +44,10 @@ make install
 
 ## Usage
 
+### the game can be downloaded from itch.io
+```
+https://maisjab.itch.io/pacman/download/Rk_MU_eyFqBfO8Grs0cN46e06_2Mu2mo_v3sRf7S
+```
 The game is launched with one configuration file:
 
 ```bash

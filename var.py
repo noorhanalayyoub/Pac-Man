@@ -2,6 +2,13 @@ import pygame
 from typing import Any
 
 
+lives: int = 3
+points_per_pacgum: int = 1
+points_per_super_pacgum: int = 5
+points_per_ghost: int = 10
+seed: int = 42
+level_max_time: int = 90000
+
 row: int = 14
 col: int = 6
 removed: list[pygame.Rect] = []

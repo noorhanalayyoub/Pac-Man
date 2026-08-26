@@ -1,7 +1,6 @@
 import pygame
 import var
 from pacgums import remove_gums
-import parser
 from ghost import ghost
 from mazegenerator import MazeGenerator
 from typing import Sequence
@@ -21,7 +20,7 @@ class Player:
         self.cooldown = 100
         self.move_last = pygame.time.get_ticks()
         self.move_cooldown = 200
-        self.lives = parser.lives
+        self.lives = var.lives
         self.pos: list[float] = [930, 510]
         # -30 to be in the middle of the cell
         self.surface: pygame.Surface = surface
@@ -189,12 +188,12 @@ class Player:
         for gum in gum_rect:
             # print(gum.x,gum.y)
             if self.pos[0] == gum.x + 1 and self.pos[1] == gum.y + 1:
-                self.score += parser.points_per_pacgum
+                self.score += var.points_per_pacgum
                 var.num_of_eaten_gums += 1
                 var.removed.append(gum)
         if self.ate_super():
             var.num_of_eaten_gums += 1
-            self.score += parser.points_per_super_pacgum
+            self.score += var.points_per_super_pacgum
         return self.score
 
     def ate_super(self) -> bool:

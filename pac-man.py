@@ -62,28 +62,6 @@ def load_image(path: str) -> pygame.Surface:
         raise SystemExit(1) from error
 
 
-def validate_maze(generated_maze: MazeGenerator) -> None:
-    """Reject malformed or unsolvable mazes before gameplay starts.
-
-    Args:
-        generated_maze: The maze generator instance to validate.
-
-    Raises:
-        ValueError: If dimensions, cells, or path are invalid.
-    """
-    grid = generated_maze.maze
-    if len(grid) != 14 or any(len(row) != 30 for row in grid):
-        raise ValueError("generated maze has invalid dimensions")
-    if any(
-        not isinstance(cell, int) or cell < 0 or cell > 15
-        for row in grid
-        for cell in row
-    ):
-        raise ValueError("generated maze contains invalid cells")
-    if not generated_maze.shortest_path:
-        raise ValueError("generated maze has no valid path")
-
-
 try:
     parser.load_from_args(sys.argv)
 except parser.ConfigError as error:
@@ -154,10 +132,9 @@ def setup_level() -> None:
     """
     try:
         if var.level == 1:
-            new_maze = MazeGenerator(seed=parser.seed, size=(30, 14))
+            new_maze = MazeGenerator(seed=var.seed, size=(30, 14))
         else:
             new_maze = MazeGenerator(size=(30, 14))
-        validate_maze(new_maze)
         new_gums, new_num_of_gums = place_gums(screen, new_maze)
         new_ghosts: list[ghost] = []
         for i, name in enumerate(ghost_names):
@@ -291,7 +268,7 @@ while True:
                     menu = False
                     var.level = 1
                     player.score = 0
-                    player.lives = parser.lives
+                    player.lives = var.lives
                     var.cheat_mode = False
                     if not try_setup_level():
                         menu = True
@@ -375,11 +352,11 @@ while True:
         )
         now = pygame.time.get_ticks()
         if var.paused:
-            remaining_ms = parser.level_max_time - (
+            remaining_ms = var.level_max_time - (
                 var.pause_time - var.timer_start
             )
         else:
-            remaining_ms = parser.level_max_time - (now - var.timer_start)
+            remaining_ms = var.level_max_time - (now - var.timer_start)
         remaining_sec = max(0, remaining_ms // 1000)
         if var.cheat_mode:
             timer_text = hud_font.render("Time: \u221e", True, (255, 255, 0))
@@ -461,7 +438,7 @@ while True:
                     if (dx**2 + dy**2) ** 0.5 < CELL_SIZE / 2:
                         g.edible = False
                         g.start_respawn()
-                        player.score += parser.points_per_ghost
+                        player.score += var.points_per_ghost
 
             if died:
                 if player.lives <= 0:

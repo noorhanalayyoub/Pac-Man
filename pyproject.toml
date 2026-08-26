@@ -16,6 +16,7 @@ py-modules = [
     "instructions",
     "maze_visualizer",
     "pacgums",
+    "pac-man",
     "parser",
     "player",
     "scoreboard",
@@ -31,10 +32,3 @@ py-modules = [
     "mazegenerator-2.1.0-py3-none-any.whl",
 ]
 
-[tool.mypy]
-exclude = ["^mazegenerator-2\\.1\\.0-py3-none-any/"]
-
-[[tool.mypy.overrides]]
-module = ["mazegenerator", "mazegenerator.*"]
-follow_imports = "skip"
-ignore_missing_imports = true

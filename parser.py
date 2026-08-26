@@ -1,6 +1,7 @@
 import json
 import sys
 from typing import Any, Sequence
+import var
 
 
 class ConfigError(Exception):
@@ -15,13 +16,6 @@ DEFAULTS: dict[str, int] = {
     "seed": 42,
     "level_max_time": 90000,
 }
-
-lives: int = DEFAULTS["lives"]
-points_per_pacgum: int = DEFAULTS["points_per_pacgum"]
-points_per_super_pacgum: int = DEFAULTS["points_per_super_pacgum"]
-points_per_ghost: int = DEFAULTS["points_per_ghost"]
-seed: int = DEFAULTS["seed"]
-level_max_time: int = DEFAULTS["level_max_time"]
 
 
 def warning(message: str) -> None:
@@ -160,16 +154,15 @@ def load_config(path: str) -> None:
     Raises:
         ConfigError: On file or parsing errors.
     """
-    global lives, points_per_pacgum, points_per_super_pacgum
-    global points_per_ghost, seed, level_max_time
-
     data = read_json(path)
-    lives = integer_value(data, "lives")
-    points_per_pacgum = integer_value(data, "points_per_pacgum")
-    points_per_super_pacgum = integer_value(data, "points_per_super_pacgum")
-    points_per_ghost = integer_value(data, "points_per_ghost")
-    seed = integer_value(data, "seed")
-    level_max_time = integer_value(data, "level_max_time")
+    var.lives = integer_value(data, "lives")
+    var.points_per_pacgum = integer_value(data, "points_per_pacgum")
+    var.points_per_super_pacgum = integer_value(
+            data, "points_per_super_pacgum"
+            )
+    var.points_per_ghost = integer_value(data, "points_per_ghost")
+    var.seed = integer_value(data, "seed")
+    var.level_max_time = integer_value(data, "level_max_time")
 
 
 def load_from_args(arguments: Sequence[str]) -> None:
